@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Free Planning System for task management">
+    <meta name="keywords" content="Planning system, task management, kanbas, task list">
+    <meta name="author" content="DTA Labs (Laboratorio de Desarrollos Tecnologógicos Avanzados)">
+
+    <title>DW Planning System</title>
+
+    <link rel="icon" sizes="192x192" href="./image.png">
+    <link rel="apple-touch-icon" href="./image.png">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <!--link href='fullcalendar/core/main.css' rel='stylesheet' />
+    <link href='fullcalendar/daygrid/main.css' rel='stylesheet' /-->
+    <link href="main.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <!--script src='fullcalendar/core/main.js'></script>
+    <script src='fullcalendar/daygrid/main.js'></script-->
+    <script src="main.js"></script>
+
+    <style>
+        /* #region Document */
+
+        body {
+            font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif';
+            margin: 0;
+            background: #f6f6f6;
+            background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1327/ea2797cc133dd55efca420e44ac8e6ef/photo-1549558549-415fe4c37b60");
+            background-image: url("https://png.pngtree.com/thumb_back/fw800/back_pic/00/01/54/555604115c64ab3.jpg");
+            background-image: url("https://png.pngtree.com/thumb_back/fw800/back_pic/03/54/60/44579ade8d7ed0b.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 100%;
+
+        }
+
+        .container {
+            width: 100%;
+            padding-top: 105px;
+        }
+
+        #userName {
+            color: white;
+            position: relative;
+            top: -10px;
+        }
+
+        .main {
+            min-height: 75vh;
+            padding: 10px;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, .35);
+            padding: 10px;
+            clear: both;
+            color: wheat;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer a {
+            padding: 10px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            background: rgba(0, 0, 0, 0.5);
+            margin: 7px;
+            padding: 3px;
+            border-radius: 5px;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 35px;
+            border: 1px solid gray;
+            box-shadow: 2px 2px 4px black;
+        }
+
+        .chart {
+            height: 300px;
+            margin: 20px 10px;
+            border: 1px solid gray;
+            border-radius: 5px;
+            box-shadow: 2px 2px 4px black;
+        }
+
+        .btnCircular {
+            position: fixed;
+            right: 30px;
+            z-index: 11;
+            border-radius: 50%;
+            height: 40px;
+            cursor: pointer;
+            box-shadow: 2px 2px #3f51b5;
+        }
+
+        .btnAddTask {
+            bottom: 165px;
+        }
+
+        .btnProjects {
+            bottom: 120px;
+        }
+
+        .btnVideoChat {
+            bottom: 75px;
+        }
+
+        .btnMessenger {
+            bottom: 30px;
+        }
+
+        .newIcon {
+            width: 40px;
+            margin-bottom: 40px;
+        }
+
+        .openCloseProjectInfos {
+            cursor: pointer;
+        }
+
+
+        /* #endregion */
+
+        /* #region Project*/
+
+        .projectName {
+            display: block;
+            color: #fff;
+            font-size: .6em;
+            margin-top: -5px;
+        }
+
+        .projectArea {
+            background: rgba(255, 255, 255, .3);
+            border-radius: 5px;
+            border: 1px solid gray;
+            padding: 3px;
+            height: 73vh;
+            margin: 5px;
+            box-shadow: 2px 2px 4px black;
+        }
+
+        .projectData {
+            background: white;
+        }
+
+        .projectInfo {
+            font-size: 1.2em;
+            margin-left: 10px;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .projectInfo span {
+            font-style: italic;
+        }
+
+        .userPicture {
+            float: left;
+        }
+
+        .userInfo {
+            width: 100%;
+            margin-left: 50px;
+            margin-bottom: 5px;
+        }
+
+        .userName {
+            font-size: 1em;
+        }
+
+        .userPosition {
+            position: relative;
+            top: -10px;
+            font-size: .8em;
+        }
+
+        /* #endregion */
+
+        /* #region Columns*/
+
+        .column {
+            width: 19%;
+            padding: 5px;
+            float: left;
+        }
+
+        .columnTitle {
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #3f51b5;
+            color: aliceblue;
+            text-shadow: 1px 1px 4px black;
+            font-weight: 700;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        .columnContent {
+            height: 65vh;
+            overflow-y: auto;
+        }
+
+        /* #endregion*/
+
+        /* #region Task*/
+
+        .taskTile {
+            border: 1px solid #3f51b5;
+            border-radius: 3px;
+            width: 96%;
+            margin-bottom: 5px;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-left: 5px solid #3f51b5;
+            background: whitesmoke;
+            box-shadow: 2px 2px 4px black;
+        }
+
+        .taskList {
+            color: black;
+            font-size: 1.5em;
+            height: 67vh;
+            overflow-y: auto;
+            margin-left: 3%;
+        }
+
+        .taskTitle {
+            font-size: .8em;
+            padding-left: 10px;
+            background: white;
+        }
+
+        .taskBar {
+            background: #efefef;
+            font-size: .55em;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .taskDates {
+            padding-left: 10px;
+            float: left;
+        }
+
+        .taskResponsibles {
+            float: right;
+            padding-right: 10px;
+        }
+
+        .taskDrag {
+            -ms-transform: rotate(5deg);
+            /* IE 9 */
+            -webkit-transform: rotate(5deg);
+            /* Safari 3-8 */
+            transform: rotate(5deg);
+        }
+
+        /* #endregion*/
+
+        /* #region Modal*/
+
+        .login {
+            position: relative;
+            width: 400px;
+            top: 50px;
+            left: 50%;
+            margin-left: -200px;
+            border-radius: 5px;
+            background: white;
+            border: 1px solid blue;
+            box-shadow: 2px 2px 3px black;
+        }
+
+        .modalWindow {
+            width: 70%;
+            position: relative;
+            left: 50%;
+            margin-left: -35%;
+            border: 1px solid blue;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 2px 2px 3px black;
+            margin-top: 20px;
+            margin-bottom: 60px;
+        }
+
+        .modalHeader {
+            background: #f6f6f6;
+            border-radius: 5px 5px 0 0;
+            padding: 10px 10px 10px 30px;
+            font-weight: 700;
+            border-bottom: 1px solid gray;
+        }
+
+        .modalContainer {
+            background: white;
+            padding: 5px;
+        }
+
+        .modalBody {
+            padding: 20px 10px 30px 30px;
+        }
+
+        .modalFooter {
+            background: #f6f6f6;
+            border-radius: 0 0 5px 5px;
+            padding: 10px;
+            border-top: 1px solid gray;
+            text-align: right;
+        }
+
+        .projectBox {
+            position: relative;
+            top: 50px;
+            background: #f6f6f6;
+            border-radius: 5px;
+            width: 200px;
+            height: 200px;
+            text-align: center;
+            float: left;
+            margin-left: 40px;
+            cursor: pointer;
+            display: flex;
+            border: 1px solid blue;
+            box-shadow: 2px 2px 3px black;
+        }
+
+        .projectBoxName {
+            display: flex;
+            align-items: center;
+            font-size: 1.5em;
+        }
+
+        button {
+            border-radius: 5px;
+            width: 100px;
+            padding: 5px;
+        }
+
+        input,
+        .inputData {
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 80%;
+            padding: 5px;
+        }
+
+        .chatWindow {
+            width: 350px;
+            height: 500px;
+            bottom: -50px;
+            right: -150px;
+        }
+
+        .chatContent {
+            height: 200px;
+            overflow-y: auto;
+            padding: 0 5px 5px 5px;
+        }
+
+        .chatFooter {
+            bottom: 0px;
+            position: absolute;
+            width: 100%;
+        }
+
+        .chatModal {
+            position: fixed;
+            bottom: 50px;
+            right: 30px;
+            background: #f2fefe;
+            width: 250px;
+            height: 300px;
+            border: 1px solid blue;
+            border-radius: 5px;
+            box-shadow: 2px 2px 3px black;
+        }
+
+        .teamModal {
+            position: fixed;
+            bottom: 30px;
+            right: 80px !important;
+            background: #f2fefe;
+            width: 250px;
+            height: 300px;
+            border: 1px solid blue;
+            border-radius: 5px;
+            box-shadow: 2px 2px 3px black;
+        }
+
+        .modalClose {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+
+        #textMsg {
+            margin-top: 2px;
+            padding: 6px;
+            width: 235px;
+        }
+
+        button {
+            margin-left: 10px !important;
+        }
+
+        /* #endregion */
+
+        /* #region Menu */
+
+        header {
+            /*background: rgba(0, 0, 0, 0.45);*/
+            width: 100%;
+            position: fixed;
+            z-index: 100;
+        }
+
+        .headerTitle {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 10px;
+            height: 45px;
+        }
+
+        .header-img {
+            width: 140px;
+            height: 45px;
+        }
+
+        .header-left {
+            float: left;
+            margin-right: 30px;
+        }
+
+        .header-main {
+            color: white;
+            float: left;
+            margin-top: -15px;
+            font-size: 2em;
+        }
+
+        .projectAreaLeft {
+            color: white;
+            text-shadow: 1px 1px 4px grey;
+            float: left;
+            width: 320px;
+        }
+
+        .projectAreaRight {
+            height: 72vh;
+            overflow-y: auto;
+        }
+
+        .userOptions {
+            margin-top: 5px;
+            text-align: right;
+            float: right;
+        }
+
+        .optionsButtons {
+            background: rgba(0, 0, 0, 0.2);
+            float: left;
+            width: 100%;
+            font-size: .9em;
+        }
+
+        nav ul {
+            list-style: none;
+            overflow: hidden;
+            padding: 0 0 0 10px;
+            margin: 0;
+            float: left;
+        }
+
+        nav ul li {
+            float: left;
+        }
+
+        nav ul li a {
+            display: block;
+            padding: 10px;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 1px 1px 4px black;
+        }
+
+        nav ul li a:hover {
+            background: rgba(0, 0, 0, 0.5);
+            margin: 7px;
+            padding: 3px;
+            border-radius: 5px;
+        }
+
+        /* #endregion */
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="headerTitle">
+            <div class="header-left">
+                <img class="header-img" src="./image.png" alt="">
+            </div>
+            <div class="header-main">
+                <span>Planning system</span>
+                <span id="projectName" class="projectName">Make your work easy</span>
+            </div>
+            <div id="userOptions" class="userOptions"></div>
+        </div>
+        <div id="optionsButtons" class="optionsButtons">
+            <nav style="float: left;">
+                <ul>
+                    <li><a href="#" onclick="showProjectSelector()">
+                            <i class="fa fa-home" aria-hidden="true"></i> My projects
+                        </a>
+                    </li>
+                    <li><a href="#" onclick="showSelectedProject()">
+                            <i class="fa fa-columns" aria-hidden="true"></i> Board
+                        </a>
+                    </li>
+                    <li><a href="#" onclick="showProjectTaskList()">
+                            <i class="fa fa-list-alt" aria-hidden="true"></i> Task List
+                        </a>
+                    </li>
+                    <!--li><a href="#" onclick="showProjectSelector()">
+                            <i class="fa fa-calendar" aria-hidden="true"></i> Calendar
+                        </a>
+                    </li-->
+                    <li><a href="#" onclick="openProjectInfo()">
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Statistics
+                        </a>
+                    </li>
+                    <li><a href="#" onclick="addNewTask()">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i> New Task
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <nav style="float: right;">
+                <ul>
+                    <li><a href="#" onclick="showMessenger()">
+                            <i class="fa fa-comment-o" aria-hidden="true"></i> Mesenger
+                        </a>
+                    </li>
+                    <li><a href="#" onclick="addNewTask()">
+                            <i class="fa fa-cog" aria-hidden="true"></i> Settings
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!--div class="main"-->
+
+        <div id="login" class="login">
+            <div class="modalHeader">
+                Login
+            </div>
+            <div class="modalBody">
+                <div class="input-group margin-bottom-sm">
+                    <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw" aria-hidden="true"></i></span>
+                    <input id="userMail" class="form-control" type="text" placeholder="Email address" autofocus>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-key fa-fw" aria-hidden="true"></i></span>
+                    <input id="userPassword" class="form-control" type="password" placeholder="Password"
+                        onkeypress="pswKeyPressed()">
+                </div>
+                <p id="loginError" style="color: red; display: none">User mail or password incorrect!!!</p>
+            </div>
+            <div class="modalFooter">
+                <button onclick="login()">Login</button>
+            </div>
+        </div>
+
+        <div id="project">
+            <div id="projectSelector" class="projectSelector">
+                <div id="project_0" class="projectBox">
+                    <div class="projectBoxName" onclick="showNewProjectWindow()()"><span
+                            style="font-size: 7em; margin-top: -30px; margin-left: 40px;">+</span></div>
+                </div>
+                <div id="projectList"></div>
+            </div>
+
+            <div id="projectData" class="projectArea" style="display: none;">
+                <div class="projectAreaLeft">
+                    <div class="projectInfo" style="display: none;">Leader: <span id="projectLeader"></span></div>
+                    <div class="projectInfo" style="display: none;">Start date: <span id="projectStart"></span></div>
+                    <div class="projectInfo" style="display: none;">End date: <span id="projectEnd"></span></div>
+                    <div class="projectInfo" style="display: none;">Status: <span id="projectStatus"></span></div>
+                    <div class="projectInfo">Team (Name & position):</div>
+                    <div id="projectUsers" class="projectInfo" style="width: 100%"></div>
+                </div>
+                <div class="projectAreaRight">
+                    <div id="chartTasks" class="chart"></div>
+                    <div id="chartUsers" class="chart"></div>
+                </div>
+            </div>
+
+            <div id="projectBoard" class="projectArea">
+                <div id="drag_To do" class="column">
+                    <div id="columnTitle_To do" class="columnTitle"></div>
+                    <div id="columnContent_To do" class="columnContent" ondrop="drop(event, '')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+                <div id="drag_On schedule" class="column">
+                    <div id="columnTitle_On schedule" class="columnTitle"></div>
+                    <div id="columnContent_On schedule" class="columnContent" ondrop="drop(event, 'On schedule')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+                <div id="drag_Overdue" class="column">
+                    <div id="columnTitle_Overdue" class="columnTitle"></div>
+                    <div id="columnContent_Overdue" class="columnContent" ondrop="drop(event, 'Overdue')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+                <div id="drag_Done" class="column">
+                    <div id="columnTitle_Done" class="columnTitle"></div>
+                    <div id="columnContent_Done" class="columnContent" ondrop="drop(event, 'Done')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+                <div id="drag_Canceled" class="column">
+                    <div id="columnTitle_Canceled" class="columnTitle"></div>
+                    <div id="columnContent_Canceled" class="columnContent" ondrop="drop(event, 'Canceled')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+            </div>
+
+            <div id="projectTaskList" class="projectArea" style="display: none;">
+                <div class="projectInfo" style="margin-bottom: 10px;">Task List:</div>
+                <div id="tasksList" class="taskList"></div>
+            </div>
+        </div>
+
+        <div id="taskWindow" class="modalBackgroud">
+            <div class="modalWindow taskModal">
+                <div class="modalHeader">Edit task</div>
+                <div class="modalContainer">
+                    <table class="table table-striped table-inverse table-responsive" style="width:100%">
+                        <tbody>
+                            <tr>
+                                <td scope="row" valign="top">Task</td>
+                                <td colspan="3">
+                                    <div id="task" type="text" class="inputData" style="border: 1px solid gray;"
+                                        contenteditable="true"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row">Responsibles</td>
+                                <td>
+                                    <input id="responsible" type="hidden">
+                                    <span id="responsibleAvatar" style="width: 25px !important;"></span>&nbsp;&nbsp;
+                                    <i class="fa fa-plus-circle" aria-hidden="true"
+                                        style="font-size: 1.7em; cursor: pointer;"
+                                        onclick="showResponsibleWindow()"></i>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td scope="row">Start date</td>
+                                <td><input id="startDate" type="date"></td>
+                                <td>End date</td>
+                                <td><input id="endDate" type="date"></td>
+                            </tr>
+                            <tr>
+                                <td scope="row">Percentage</td>
+                                <td><span id="percentage">0</span>%</td>
+                                <td>Status</td>
+                                <td>
+                                    <select id="status" type="text">
+                                        <option value="Done">Done</option>
+                                        <option value="On schedule">On schedule</option>
+                                        <option value="Overdue">Overdue</option>
+                                        <option value="Canceled">Canceled</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row" valign="top">Check list:</td>
+                                <td colspan="3">
+                                    <div id="checkList" class="checkList"></div>
+                                    <input type="text" id="newCheckListItem" name="newCheckListItem"
+                                        placeholder="Enter new item..." onkeypress="newCheckListItemPressed()"><br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row" valign="top">Comments</td>
+                                <td colspan="3">
+                                    <div id="comments" class="inputData" style="border: 1px solid gray;"
+                                        contenteditable="true"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row">Area</td>
+                                <td><input id="area" type="text"></td>
+                                <td>Repeat</td>
+                                <td><input id="repeat" type="text"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <input id="key" type="hidden">
+                </div>
+                <div class="modalFooter">
+                    <button onclick="deleteTask()" id="deleteTaskButton">Delete</button>
+                    <button onclick="selectView()">Cancel</button>
+                    <button onclick="updateTask()">Acept</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="newProjectWindow" class="modalBackgroud">
+            <div class="modalWindow taskModal">
+                <div class="modalHeader">New project</div>
+                <div class="modalContainer">
+                    <div class="input-group margin-bottom-sm">
+                        Name: <input id="newProjectName" class="form-control" type="text" placeholder="Project Name">
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        Leader: <input id="newProjectLeader" class="form-control" type="hidden"
+                            placeholder="Project Leader">
+                        <span id="newProjectLeaderName"></span>
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        Start: <input id="newProjectStart" class="form-control" type="date">
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        End: <input id="newProjectEnd" class="form-control" type="date">
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        Status: <input id="newProjectStatus" class="form-control" type="text"
+                            placeholder="Project Status">
+                    </div>
+                </div>
+                <div class="modalFooter">
+                    <button onclick="showProjectSelector()">Cancel</button>
+                    <button onclick="createNewProject()">Acept</button>
+                </div>
+            </div>
+        </div>
+
+        <!--/div-->
+
+        <div id="team" class="teamModal" style="display:none;">
+            <div class="modalHeader">
+                <span onclick="document.getElementById('team').style.display='none'" class="modalClose">&times;</span>
+                <span>Team:</span>
+            </div>
+            <div class="chatContent">
+                <div id="teamList" style="font-size: .8em;"></div>
+            </div>
+            <div class="modalFooter" style="position: absolute;bottom: 0;width: 91%;">
+                <button onclick="document.getElementById('team').style.display='none'"
+                    style="width: 49px;">Cancel</button>
+                <button onclick="addNewResponsible()" style="width: 49px;">Acept</button>
+            </div>
+        </div>
+
+        <div id="chatWindow" class="chatModal" style="display:none;">
+            <div class="modalHeader">
+                <span onclick="document.getElementById('chatWindow').style.display='none'"
+                    class="modalClose">&times;</span>
+                <span>Instant messenger</span>
+            </div>
+            <div class="chatContent">
+                <div id="chatList" style="font-size: .8em;"></div>
+            </div>
+            <div class="modalFooter" style="position: absolute;bottom: 0;">
+                <input type="text" id="textMsg" onkeypress="keyPressed(event)" placeholder="Text message..."
+                    style="width: 150px;margin-bottom: 0;">
+                <button onclick="sendMsg()" style="width: 49px;">Send</button>
+            </div>
+        </div>
+
+        <div id="optionsButtons2" class="buttons" style="display:none;">
+            <div class="btnCircular btnAddTask" onclick="addNewTask()" title="Add new task"><img src="./plus.png"
+                    class="newIcon"></div>
+            <div class="btnCircular btnProjects" onclick="showProjectSelector()" title="Show projects"><img
+                    src="./projects.png" class="newIcon"></div>
+            <div class="btnCircular btnMessenger" onclick="showMessenger()" title="Show messenger"><img src="./chat.png"
+                    class="newIcon"></div>
+            <div class="btnCircular btnVideoChat" onclick="showVideoChat()" title="Video chat"><img src="./video.png"
+                    class="newIcon"></div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        &copy; 2019 by DTA Labs <i>[Laboratorio de Desarrollos Tecnológicos Avanzados]</i>. All rights reserved. <a
+            href="https://www.dwrobelconsulting.com">Powered by DWConsulting
+            Professional Services</a>
+    </div>
+
+</body>
+
+<script>
+    let usersList;
+    let projectsList;
+    let authUser;
+    let actualProject;
+    let actualProjectKey;
+    let tasksList;
+    let newTaskIndex = 0;
+    let newProjectIndex = 0;
+    let showProjectInfo = false;
+    let showChat = false;
+    let viewIndex = 1;
+
+    window.onload = function () {
+        initializeFirebase();
+        initializeUI();
+        loadUsersFromFB();
+        loadProjectsFromFB();
+    };
+
+    // #region Firebase
+
+    function initializeFirebase() {
+        var config = {
+            apiKey: "AIzaSyAhLsIT6egSpec2E93p1ZtlZEX2N4wySGs",
+            authDomain: "dwplanning-fd04c.firebaseapp.com",
+            databaseURL: "https://dwplanning-fd04c.firebaseio.com",
+            projectId: "dwplanning-fd04c",
+            storageBucket: "dwplanning-fd04c.appspot.com",
+            messagingSenderId: "1042985627662"
+        };
+        firebase.initializeApp(config);
+    }
+
+    function loadUsersFromFB() {
+        firebase.database().ref("users")
+            .on("value", users => {
+                usersList = users;
+            });
+    }
+
+    function loadProjectsFromFB() {
+        firebase.database().ref("projects")
+            .on("value", projects => {
+                projectsList = projects;
+                newProjectIndex = "project_" + getNewIndex(projectsList.val());
+                showProjectsList();
+                if (actualProject) {
+                    selectProject(actualProjectKey);
+                }
+            });
+    }
+
+    function loadChatFromFB() {
+        if (actualProject) {
+            firebase.database().ref("projects/" + actualProject.key + "/chat")
+                .on("value", messages => {
+                    updateChatFromFB(messages.val());
+                });
+        }
+    }
+
+    function loadNotificationsFromFB() {
+        if (actualProject) {
+            firebase.database().ref("projects/" + actualProject.key + "/tasks")
+                .on("child_added", task => {
+                    launchNotifications(task);
+                });
+        }
+    }
+
+    function spawnNotification(theBody, theIcon, theTitle) {
+        let options = {
+            body: theBody,
+            icon: theIcon
+        }
+        let n = new Notification(theTitle, options);
+    }
+
+    // #endregion
+
+    // #region Login
+
+    function pswKeyPressed() {
+        if (event.keyCode == 13) {
+            login();
+        }
+    }
+
+    function login() {
+        authUser = null;
+        let userMail = document.getElementById('userMail').value;
+        let userPassword = document.getElementById('userPassword').value;
+        usersList.forEach(user => {
+            let actualUser = user.val();
+            if (actualUser.mail == userMail && actualUser.password == userPassword) {
+                authUser = actualUser;
+                authUser.key = user.key;
+            }
+        });
+        if (authUser) {
+            document.getElementById('userOptions').innerHTML = "<span id='userName'>" + authUser.name +
+                " </span><img id='userAvatar' src='" + authUser.picture + "' class='avatar'>";
+            showProjectSelector();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+
+    // #endregion
+
+    // #region Projects
+
+    function selectView() {
+        switch (viewIndex) {
+            case 1:
+                showSelectedProject();
+                break;
+            case 2:
+                showProjectTaskList();
+                break;
+        }
+    }
+
+    function closeAllWindows() {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('projectSelector').style.display = 'none';
+        document.getElementById('projectData').style.display = 'none';
+        document.getElementById('projectBoard').style.display = 'none';
+        document.getElementById('projectTaskList').style.display = 'none';
+        document.getElementById('taskWindow').style.display = 'none';
+        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('optionsButtons').style.display = 'none';
+        document.getElementById('newProjectWindow').style.display = 'none';
+    }
+
+    function initializeUI() {
+        closeAllWindows();
+        document.getElementById('login').style.display = 'block';
+    }
+
+    function showProjectSelector() {
+        closeAllWindows();
+        showProjectsList();
+        document.getElementById('projectSelector').style.display = 'block';
+    }
+
+    function showProjectsList() {
+        //showProjectSelector();
+        let projectTiles = "";
+        projectsList.forEach(project => {
+            let actProject = project.val();
+            actProject.key = project.key;
+            if (actProject.leader == authUser.key || actProject.team.includes(authUser.key)) {
+                projectTiles += createProjectTile(actProject);
+            }
+        });
+        document.getElementById('projectList').innerHTML = projectTiles;
+    }
+
+    function createProjectTile(project) {
+        let html = '';
+        html += '<div class="projectBox">';
+        html += '<div class="projectBoxName" onclick="selectProject(\'' + project.key + '\')">' + project.name +
+            '</div>';
+        html += '</div>';
+        return html;
+    }
+
+    function selectProject(projectKey) {
+        projectsList.forEach(project => {
+            let actProject = project.val();
+            actProject.key = project.key;
+            if (actProject.key == projectKey) {
+                actualProjectKey = projectKey;
+                actualProject = actProject;
+                tasksList = actProject.tasks;
+                newTaskIndex = "task_" + getNewIndex(tasksList);
+            }
+        });
+        setProjectData();
+        setProjectBoard();
+        setProjectTaskList();
+        drawChartTasks(tasksList);
+        drawChartUsers(tasksList, usersList);
+        //showSelectedProject();
+        selectView();
+        //loadNotificationsFromFB();
+    }
+
+    function getNewIndex(list) {
+        let result = 0;
+        for (let key in list) {
+            let id = parseInt(key.split('_')[1]);
+            if (id > result) {
+                result = id;
+            }
+        }
+        return result + 1;
+    }
+
+    function setProjectData() {
+        document.getElementById('projectName').innerHTML = actualProject.name;
+        document.getElementById('projectLeader').innerHTML = actualProject.leader;
+        document.getElementById('projectStart').innerHTML = actualProject.startDate;
+        document.getElementById('projectEnd').innerHTML = actualProject.endDate;
+        document.getElementById('projectStatus').innerHTML = actualProject.status;
+        showProjectUsers();
+    }
+
+    function setProjectBoard() {
+        setTaskArea('To do');
+        setTaskArea('On schedule');
+        setTaskArea('Overdue');
+        setTaskArea('Done');
+        setTaskArea('Canceled');
+    }
+
+    function setTaskArea(taskArea) {
+        let html = '';
+        for (let task in tasksList) {
+            let actTask = tasksList[task];
+            if (actTask.status == taskArea || (taskArea == "To do" && actTask.status == "")) {
+                html += '<div id="' + taskArea + '-' + task + '" class="taskTile" onclick="editTask(\'' + task +
+                    '\')" draggable="true" ondragstart="drag(event)">';
+                html += '   <div class="taskTitle"><b>' + task.split('_')[1] + '.-</b> ' + actTask.task + '</div>';
+                html += '   <div class="taskBar" draggable="false">';
+                html += '       <div class="taskDates" draggable="false" style="margin-top: 7px;">' + actTask
+                    .startDate + ' &nbsp;&nbsp;&nbsp;<b>' + getTaskCheckLitStatus(actTask.checkList) + '</b></div>';
+                html += '       <div class="taskResponsibles" draggable="false">' + getTaskResponsibleAvatars(actTask
+                    .responsible) + '</div>';
+                html += '   </div>';
+                html += '</div>';
+            }
+        }
+        document.getElementById('columnTitle_' + taskArea).innerHTML = taskArea;
+        document.getElementById('columnContent_' + taskArea).innerHTML = html;
+    }
+
+    function setProjectTaskList() {
+        let html = '';
+        for (let task in tasksList) {
+            let actTask = tasksList[task];
+            let backgroundColor = (actTask.status == "Canceled") ? "red" : (actTask.status == "Overdue") ? "yellow" : (
+                actTask.status == "Done") ? "greenyellow" : "whitesmoke";
+            html += '<div id="taskList_' + task + '" class="taskTile" onclick="editTask(\'' + task +
+                '\')" style="background: ' + backgroundColor + '">';
+            html += '   <div class="taskTitle"><b>' + task.split('_')[1] + '.-</b> ' + actTask.task + '</div>';
+            html += '   <div class="taskBar">';
+            html += '       <div class="taskDates" style="margin-top: 7px;">(' + actTask.status +
+                ')&nbsp;&nbsp;&nbsp;<b>' + actTask.startDate + '&nbsp;&nbsp;&nbsp;<b>' + getTaskCheckLitStatus(actTask
+                    .checkList) + '</b></div>';
+            html += '       <div class="taskResponsibles">' + getTaskResponsibleAvatars(actTask.responsible) + '</div>';
+            html += '   </div>';
+            html += '</div>';
+        }
+        document.getElementById('tasksList').innerHTML = html;
+    }
+
+    function getTaskCheckLitStatus(checkList) {
+        let sum = 0;
+        let result = "";
+        if (checkList) {
+            for (let i in checkList) {
+                if (checkList[i].status) {
+                    sum++;
+                }
+            }
+            result = '<i class="fa fa-check-square-o" aria-hidden="true" style="font-weight: 900;"></i> [' + sum + '/' +
+                checkList.length + ']';
+        }
+        return result;
+    }
+
+    function getTaskResponsibleAvatars(taskReponsibles) {
+        let avatars = [];
+        let responsibles = taskReponsibles.trim().split(',');
+        responsibles.forEach(responsible => {
+            usersList.forEach(user => {
+                if (responsible == user.key) {
+                    avatars.push("<img src='" + user.val().picture +
+                        "' class='avatar' style='width: 20px;'>");
+                }
+            });
+        });
+        return avatars;
+    }
+
+    function showSelectedProject() {
+        closeAllWindows();
+        viewIndex = 1;
+        document.getElementById('projectBoard').style.display = 'block';
+        document.getElementById('optionsButtons').style.display = 'block';
+    }
+
+    function showProjectTaskList() {
+        closeAllWindows();
+        viewIndex = 2;
+        document.getElementById('projectTaskList').style.display = 'block';
+        document.getElementById('optionsButtons').style.display = 'block';
+    }
+
+    function showNewProjectWindow() {
+        closeAllWindows();
+        document.getElementById('newProjectWindow').style.display = 'block';
+        document.getElementById('newProjectLeader').value = authUser.key;
+        document.getElementById('newProjectLeaderName').innerHTML = authUser.name;
+        document.getElementById('newProjectStart').value = getActualDate();
+    }
+
+    function createNewProject() {
+        let project = {
+            name: document.getElementById('newProjectName').value,
+            leader: document.getElementById('newProjectLeader').value,
+            startDate: document.getElementById('newProjectStart').value,
+            endDate: document.getElementById('newProjectEnd').value,
+            status: document.getElementById('newProjectStatus').value,
+            team: ""
+        }
+        createNewProjectInFB(project);
+        showProjectSelector();
+    }
+
+    function createNewProjectInFB(project) {
+        firebase.database().ref("projects/" + newProjectIndex).set(project);
+    }
+
+    // #endregion
+
+    // #region Project Data
+
+    function showProjectUsers() {
+        let element = document.getElementById('projectUsers');
+        let usersPicture = "";
+        usersList.forEach(user => {
+            let actUser = user.val();
+            usersPicture += "<div class='userPicture'><img src='" + actUser.picture +
+                "' class='avatar'></div><div class='userInfo'><span class='userName'> " + actUser.name +
+                "</span><br><span class='userPosition'> " + actUser.position + "</span></div>";
+        });
+        element.innerHTML = usersPicture;
+    }
+
+    function getUsersAvatars(responsible) {
+        let avatars = [];
+        usersList.forEach(user => {
+            if (responsible.includes(user.key)) {
+                avatars.push("<img src='" + user.val().picture + "' class='avatar'>");
+            }
+        });
+        return avatars;
+    }
+
+    function openProjectInfo() {
+        closeAllWindows();
+        document.getElementById('projectData').style.display = 'block';
+        document.getElementById('optionsButtons').style.display = 'block';
+    }
+
+    // #endregion
+
+    // #region Task
+
+    function getTask(id) {
+        let result = null;
+        for (let i = 0; i < tasksList.length; i++) {
+            if (tasksList[i].id == id) {
+                result = tasksList[i];
+            }
+        };
+        return result;
+    }
+
+    function addNewTask() {
+        let task = {
+            task: "",
+            responsible: "",
+            startDate: getActualDate(),
+            endDate: "",
+            percentage: "",
+            comments: "",
+            area: "",
+            status: "",
+            repeat: ""
+        }
+        showFrom(task, newTaskIndex, false);
+    }
+
+    function getActualDate() {
+        let date = new Date();
+        let year = date.getFullYear();
+        let month = (date.getMonth() < 10) ? "0" + date.getMonth() : date.getMonth();
+        let day = date.getDate();
+        return year + "-" + month + "-" + day;
+    }
+
+    function editTask(taskKey) {
+        for (let task in tasksList) {
+            if (task == taskKey) {
+                showFrom(tasksList[task], taskKey, true);
+            }
+        }
+    }
+
+    function showFrom(task, taskKey, showDeleteButton) {
+        closeAllWindows();
+        document.getElementById('optionsButtons').style.display = 'block';
+        document.getElementById("taskWindow").style.display = "block";
+        document.getElementById("deleteTaskButton").style.display = (showDeleteButton) ? "inline" : "none";
+        document.getElementById("key").value = taskKey;
+        document.getElementById("task").innerHTML = task.task;
+        document.getElementById("responsible").value = task.responsible;
+        document.getElementById("responsibleAvatar").innerHTML = getTaskResponsibleAvatars(task.responsible);
+        document.getElementById("startDate").value = task.startDate;
+        document.getElementById("endDate").value = task.endDate;
+        document.getElementById("percentage").innerHTML = task.percentage;
+        document.getElementById("comments").innerHTML = task.comments;
+        document.getElementById("area").value = task.area;
+        document.getElementById("status").value = task.status;
+        document.getElementById("repeat").value = task.repeat;
+        document.getElementById("checkList").innerHTML = getCheckListHTML(task.checkList);
+    }
+
+    function showResponsibleWindow() {
+        document.getElementById("team").style.display = "block";
+        let responsibles = document.getElementById("responsible").value;
+        let teamHTML = "";
+        usersList.forEach(user => {
+            let status = (responsibles.includes(user.key)) ? "checked" : "";
+            teamHTML += "<div>";
+            teamHTML += "   <input type='checkbox' value='" + user.key + "' " + status +
+                " class='checkListChecked' style='width: 20px; transform: scale(1.2);'>";
+            teamHTML += "   <img src='" + user.val().picture + "' class='avatar' style='width: 20px;'> " + user
+                .val().name + "</div>";
+            teamHTML += "</div>";
+        });
+        document.getElementById('teamList').innerHTML = teamHTML;
+    }
+
+    function addNewResponsible() {
+        let team = "";
+        teamObjects = document.getElementById("teamList").getElementsByTagName("input");
+        for (let i in teamObjects) {
+            if (teamObjects[i].checked) {
+                team += teamObjects[i].value + ",";
+            }
+        }
+        team = team.substr(0, team.length - 1);
+        document.getElementById("responsible").value = team;
+        document.getElementById("responsibleAvatar").innerHTML = getTaskResponsibleAvatars(team);
+        document.getElementById("team").style.display = "none";
+    }
+
+    function getCheckListHTML(checkList) {
+        let result = "";
+        for (let i in checkList) {
+            let status = (checkList[i].status) ? "checked" : "";
+            result += '<input type="checkbox" onclick="calculatePercentage()" class="checkListChecked" ' + status +
+                ' style="width: 20px; transform: scale(1.2);"> <span type="text" class="checkListItem inputData" contenteditable="true">' +
+                checkList[i].item + '</span><br>';
+        }
+        return result;
+    }
+
+    function calculatePercentage() {
+        let sum = 0;
+        let result = 0;
+        let checkList = getTaskCheckList();
+        let endDate = new Date(document.getElementById("endDate").value);
+        if (checkList) {
+            for (let i in checkList) {
+                if (checkList[i].status) {
+                    sum++;
+                }
+            }
+            result = sum * 100 / checkList.length;
+        }
+        document.getElementById("percentage").innerHTML = parseInt(result);
+        if (parseInt(result) == 100) {
+            document.getElementById("status").value = "Done";
+        } else if (endDate < new Date()) {
+            document.getElementById("status").value = "Overdue";
+        } else {
+            document.getElementById("status").value = "On schedule";
+        }
+    }
+
+    function updateTask() {
+        selectView();
+        let taskKey = document.getElementById("key").value;
+        let task = {
+            task: document.getElementById("task").innerHTML,
+            responsible: document.getElementById("responsible").value,
+            startDate: document.getElementById("startDate").value,
+            endDate: document.getElementById("endDate").value,
+            percentage: document.getElementById("percentage").innerHTML,
+            comments: document.getElementById("comments").innerHTML,
+            area: document.getElementById("area").value,
+            status: document.getElementById("status").value,
+            repeat: document.getElementById("repeat").value,
+            checkList: getTaskCheckList()
+        }
+        updateTaskInFB(task, taskKey);
+    }
+
+    function getTaskCheckList() {
+        let checkList = [];
+        let checkListCheckeds = document.getElementById('checkList').getElementsByClassName('checkListChecked');
+        let checkListItems = document.getElementById('checkList').getElementsByClassName('checkListItem');
+        for (let i = 0; i < checkListItems.length; i++) {
+            let item = {
+                item: checkListItems[i].innerHTML,
+                status: checkListCheckeds[i].checked
+            };
+            checkList.push(item);
+        }
+        return checkList;
+    }
+
+    function updateTaskInFB(task, taskKey) {
+        firebase.database().ref("projects/" + actualProject.key + "/tasks/" + taskKey).set(task);
+    }
+
+    function deleteTask() {
+        let taskKey = document.getElementById("key").value;
+        let task = document.getElementById("task").value;
+        let confirmDelete = confirm("The task \"" + task + "\"will be eliminated");
+        if (confirmDelete == true) {
+            deleteTaskInFB(taskKey);
+        }
+    }
+
+    function deleteTaskInFB(taskKey) {
+        firebase.database().ref("projects/" + actualProject.key + "/tasks/" + taskKey).remove();
+    }
+
+    function newCheckListItemPressed() {
+        if (event.keyCode == 13) {
+            addNewCheckListItem();
+            calculatePercentage()
+        }
+    }
+
+    function addNewCheckListItem() {
+        let newItem = document.getElementById('newCheckListItem').value;
+        let itemHTML = '<input type="checkbox" class="checkListChecked" value="' + newItem +
+            '" style="width:20px;"> <span type="text" class="checkListItem inputData" contenteditable="true">' +
+            newItem + '</span><br>';
+        document.getElementById('checkList').innerHTML += itemHTML;
+        document.getElementById('newCheckListItem').value = "";
+    }
+
+    // #endregion
+
+    // #region Drag&Dro
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+        ev.target.style.backgroundColor = "rgba(195, 241, 222, .35)";
+    }
+
+    function leaveDrop(ev) {
+        ev.preventDefault();
+        ev.target.style.backgroundColor = "";
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function ondrag(obj) {
+        obj.className = "taskTile taskDrag";
+    }
+
+    function drop(ev, status) {
+        ev.preventDefault();
+        let taskId = ev.dataTransfer.getData("text");
+        let target = ev.target;
+        switch (target.getAttribute("class")) {
+            case "taskTitle":
+            case "taskBar":
+                target = target.parentElement.parentElement;
+                break;
+            case "taskDates":
+            case "taskResponsibles":
+                target = target.parentElement.parentElement.parentElement;
+                break;
+        }
+        document.getElementById(taskId).className = "taskTile";
+        target.appendChild(document.getElementById(taskId));
+        updateTaskStatus(taskId, status)
+        target.style.backgroundColor = "";
+    }
+
+    function updateTaskStatus(taskId, status) {
+        let taskKey = taskId.split('-')[1];
+        let actualTask = tasksList[taskKey];
+        actualTask.status = status;
+        updateTaskInFB(actualTask, taskKey);
+    }
+
+    // #endregion
+
+    // #region Chart
+
+    function drawChartTasks(tasksList) {
+        let data = getChartData(tasksList);
+        Highcharts.chart('chartTasks', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Project status chart'
+            },
+            subtitle: {
+                text: 'DW Planning'
+            },
+            xAxis: {
+                categories: [
+                    'To do',
+                    'Done',
+                    'On schedule',
+                    'Overdue',
+                    'Canceled'
+                ],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Amount of tasks'
+                }
+            },
+            legend: {
+                align: 'right',
+                verticalAlign: 'middle',
+                layout: 'vertical'
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Tasks status',
+                data: data
+            }],
+            /*responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            layout: 'horizontal'
+                        },
+                        subtitle: {
+                            text: null
+                        },
+                    }
+                }]
+            }*/
+        });
+    }
+
+    function drawChartUsers(tasksList, usersList) {
+        let data = getChartData(tasksList);
+        let users = getUsers(usersList);
+        Highcharts.chart('chartUsers', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Team behavior'
+            },
+            subtitle: {
+                text: 'DW Planning'
+            },
+            legend: {
+                align: 'right',
+                verticalAlign: 'middle',
+                layout: 'vertical'
+            },
+            xAxis: {
+                categories: users,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Tasks'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0,
+                    borderWidth: 0
+                }
+            },
+            series: getTaskStatusByUser(),
+            /*responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            layout: 'horizontal'
+                        },
+                        subtitle: {
+                            text: null
+                        },
+                    }
+                }]
+            }*/
+        });
+    }
+
+    function getChartData(tasksList) {
+        let result = [0, 0, 0, 0, 0];
+        for (let task in tasksList) {
+            switch (tasksList[task].status) {
+                case "":
+                    result[0]++;
+                    break;
+                case "Done":
+                    result[1]++;
+                    break;
+                case "On schedule":
+                    result[2]++;
+                    break;
+                case "Overdue":
+                    result[3]++;
+                    break;
+                case "Canceled":
+                    result[4]++;
+                    break;
+            }
+        }
+        return result;
+    }
+
+    function getUsers(usersList) {
+        let result = [];
+        usersList.forEach(user => {
+            result.push(user.val().name.split(' ')[0]);
+        });
+        return result;
+    }
+
+    function getTaskStatusByUser() {
+        let result = [{
+            name: 'To do',
+            data: getUserTasks('')
+        }, {
+            name: 'Done',
+            data: getUserTasks('Done')
+        }, {
+            name: 'On schedule',
+            data: getUserTasks('On schedule')
+        }, {
+            name: 'Overdue',
+            data: getUserTasks('Overdue')
+        }, {
+            name: 'Canceled',
+            data: getUserTasks('Canceled')
+        }];
+        return result;
+    }
+
+    function getUserTasks(status) {
+        let result = [];
+        usersList.forEach(user => {
+            let taskNumber = 0;
+            for (let task in tasksList) {
+                if (tasksList[task].status == status && tasksList[task].responsible.includes(user.key)) {
+                    taskNumber++;
+                }
+            }
+            result.push(taskNumber);
+        });
+        return result;
+    }
+
+    // #endregion
+
+    // #region Notifications
+
+    /*Notification.requestPermission().then(function (result) {
+        console.log(result);
+    });*/
+
+    function launchNotifications(task) {
+        let notificationTitle = task.val().task;
+        let notificationOptions = {
+            'body': 'Responsibles: ' + task.val().task + '\n Status: ' + +task.val().status,
+            'icon': '',
+            'tag': task.key
+        };
+        if (!("Notification" in window)) {
+            alert("This browser does not support desktop notification");
+        } else if (Notification.permission === "granted") {
+            var notification = new Notification(notificationTitle, notificationOptions);
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission(function (permission) {
+                if (permission === "granted") {
+                    var notification = new Notification(notificationTitle, notificationOptions);
+                }
+            });
+        }
+    }
+
+    // #endregion
+
+    // #region Communications
+
+    function showVideoChat() {
+        let chatIndex = "0000001";
+        window.open("https://appr.tc/r/" + chatIndex, "Video chat", "_blank",
+            "toolbar=yes,scrollbars=yes,resizable=yes,top=300,left=300,width=300,height=300");
+    }
+
+    function showMessenger() {
+        showChat = !showChat;
+        let display = (showChat) ? "block" : "none";
+        if (actualProject) {
+            document.getElementById("chatWindow").style.display = display;
+            loadChatFromFB();
+        }
+    }
+
+    function updateChatFromFB(messages) {
+        let chatList = document.getElementById("chatList");
+        let html = "";
+        for (let i in messages) {
+            html += "<div><b>" + messages[i].name + ":</b><br>" + messages[i].message + "</div>";
+        }
+        chatList.innerHTML = html;
+        chatList.scrollIntoView(false);
+    }
+
+    function keyPressed(event) {
+        if (event.keyCode == 13) {
+            sendMsg();
+        }
+    }
+
+    function sendMsg() {
+        let name = authUser.name;
+        let message = document.getElementById("textMsg");
+        if (message.value) {
+            firebase.database().ref("projects/" + actualProject.key + "/chat").push({
+                name: name,
+                message: message.value
+            });
+        }
+        message.value = "";
+    }
+
+    // #endregion
+</script>
+
+</html>

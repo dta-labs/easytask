@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title Page</title>
+</head>
+
+<body>
+    <button id="aut">Autorización</button>
+    <button id="ver">Verificar</button>
+    <button id="notificacion">Mostrar Notificación</button>
+    <button id="cerrar">Cerar Notificación</button>
+
+    <script>
+        let aut = document.querySelector("#aut");
+        let ver = document.querySelector("#ver");
+        let notific = document.querySelector("#notificacion");
+        let cerrar = document.querySelector("#cerrar");
+        let notificacion;
+
+        aut.addEventListener("click", () => {
+            Notification.requestPermission();
+        });
+        ver.addEventListener("click", () => {
+            console.log(Notification.permission);
+        });
+        notific.addEventListener("click", () => {
+            notificacion = new Notification("Hola qué tal", {
+                body: "Esta es mi primera notificación",
+                icon: "old/imageDTA.png",
+                image: "old/imageDTA.png"
+            });
+            notificacion.onclick = () => {
+                console.log("click en la notificación...");
+            };
+            notificacion.onshow = () => {
+                console.log("se ha mostrado la notificación...");
+            };
+            notificacion.addEventListener("close", () => {
+                console.log("se cerró la notificación...");
+            });
+        });
+        cerrar.addEventListener("click", () => {
+            notificacion.close();
+        });
+    </script>
+
+</body>
+
+</html>

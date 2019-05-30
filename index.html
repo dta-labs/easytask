@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Free Planning System for task management">
+    <meta name="keywords" content="Planning system, task management, kanbas, task list">
+    <meta name="author" content="DTA Labs (Laboratorio de Desarrollos Tecnologógicos Avanzados)">
+
+    <title>EasyTasks</title>
+
+    <!-- Optimización para móviles -->
+    <meta name="theme-color" content="#0000EF">
+    <meta name="MobileOptimized" content="width">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="shortcut icon" type="image/png" href="./image.png">
+    <link rel="apple-touch-icon" href="./image.png">
+    <link rel="apple-touch-startup-image" href="./image.png">
+    <link rel="manifest" href="./manifest.json">
+
+    <link rel="icon" sizes="192x192" href="./image.png">
+    <link rel="apple-touch-icon" href="./image.png">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <!--link href='fullcalendar/core/main.css' rel='stylesheet' />
+    <link href='fullcalendar/daygrid/main.css' rel='stylesheet' /-->
+    <link href="main.css" rel="stylesheet">
+    <link href="movil.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <!--script src='fullcalendar/core/main.js'></script>
+    <script src='fullcalendar/daygrid/main.js'></script-->
+    <script src="main.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <div class="headerTitle">
+            <div class="header-left">
+                <img class="header-img" src="./image.png" alt="">
+            </div>
+            <div class="header-main">
+                <span>Easy Tasks</span>
+                <span id="projectName" class="projectName">Make your work easy</span>
+            </div>
+            <i class="fa fa-ellipsis-v optionsMenu" aria-hidden="true" onclick="toggleUserOptions()"
+                title="Options..."></i>
+            <div id="userOptions" class="userOptions"></div>
+        </div>
+        <div id="optionsButtons" class="optionsButtons">
+            <nav style="float: left;">
+                <ul>
+                    <li><a href="#" onclick="showProjectSelector()">
+                            <i class="fa fa-home" aria-hidden="true"></i> My projects
+                        </a>
+                    </li>
+                    <li><a href="#" onclick="showSelectedProject()">
+                            <i class="fa fa-columns" aria-hidden="true"></i> Board
+                        </a>
+                    </li>
+                    <li><a href="#" onclick="showProjectTaskList()">
+                            <i class="fa fa-list-alt" aria-hidden="true"></i> Task List
+                        </a>
+                    </li>
+                    <!--li><a href="#" onclick="showProjectSelector()">
+                            <i class="fa fa-calendar" aria-hidden="true"></i> Calendar
+                        </a>
+                    </li-->
+                    <li><a href="#" onclick="openProjectInfo()">
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Statistics
+                        </a>
+                    </li>
+                    <li><a href="#" onclick="addNewTask()">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i> New Task
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <nav style="float: right;">
+                <ul>
+                    <li><a href="#" onclick="showMessenger()">
+                            <i class="fa fa-comment-o" aria-hidden="true"></i> Mesenger
+                        </a>
+                    </li>
+                    <li><a href="#" onclick="showProjectSettings()">
+                            <i class="fa fa-cog" aria-hidden="true"></i> Settings
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <div id="login" class="login">
+            <div class="modalHeader">
+                Login
+            </div>
+            <div class="modalBody">
+                <div class="input-group margin-bottom-sm">
+                    <label for="userMail"><span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"
+                                aria-hidden="true"></i></span></label>
+                    <input id="userMail" class="form-control" type="text" placeholder="Email address" autofocus>
+                </div>
+                <div class="input-group">
+                    </span>
+                    <label for="userPassword"><span class="input-group-addon"><i class="fa fa-key fa-fw"
+                                aria-hidden="true"></i></label>
+                    <input id="userPassword" class="form-control" type="password" placeholder="Password"
+                        onkeypress="pswKeyPressed()">
+                </div>
+                <p id="loginError" style="color: red; display: none">User mail or password incorrect!!!</p>
+            </div>
+            <div class="modalFooter">
+                <button
+                    onclick="document.getElementById('login').style.display = 'none';document.getElementById('register').style.display = 'block';">Register</button>
+                <button onclick="btnLogin()">Login</button>
+            </div>
+        </div>
+
+        <div id="invitation" class="login" style="display: none;">
+            <div class="modalHeader">
+                Invite a user
+            </div>
+            <div class="modalBody">
+                <div class="input-group margin-bottom-sm">
+                    <label for="invitedUserMail"><span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"
+                                aria-hidden="true"></i></span></label>
+                    <input id="invitedUserMail" class="form-control" type="text" placeholder="User email address"
+                        autofocus>
+                </div>
+                <p id="invitationError" style="color: red; display: none">Please, select a project first to join!!!</p>
+            </div>
+            <div class="modalFooter">
+                <button onclick="closeAllWindows();showProjectSelector();">Cancel</button>
+                <button onclick="sendUserInvitation()">Send</button>
+            </div>
+        </div>
+
+        <div id="register" class="login" style="display: none; margin-top: -40px;">
+            <div class="modalHeader">
+                User profile
+            </div>
+            <div class="modalBody">
+                <div class="input-group margin-bottom-sm">
+                    <label for="setUserName">
+                        <span class="input-group-addon"><i class="fa fa-terminal fa-fw" aria-hidden="true"></i></span>
+                    </label>
+                    <input id="setUserName" class="form-control" type="text" placeholder="User name" autofocus>
+                </div>
+                <div class="input-group margin-bottom-sm">
+                    <label for="setUserMail">
+                        <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw" aria-hidden="true"></i></span>
+                    </label>
+                    <input id="setUserMail" class="form-control" type="email" placeholder="Email address" autofocus>
+                </div>
+                <div class="input-group">
+                    <label for="setUserPassword">
+                        <span class="input-group-addon"><i class="fa fa-key fa-fw" aria-hidden="true"></i></span>
+                    </label>
+                    <input id="setUserPassword" class="form-control" type="password" placeholder="Set password"
+                        onkeypress="pswKeyPressed()">
+                </div>
+                <div class="input-group">
+                    <label for="confirmUserPassword">
+                        <span class="input-group-addon"><i class="fa fa-key fa-fw" aria-hidden="true"></i></span>
+                    </label>
+                    <input id="confirmUserPassword" class="form-control" type="password" placeholder="Confirm password"
+                        onkeypress="pswKeyPressed()">
+                </div>
+                <div class="input-group margin-bottom-sm">
+                    <label for="setUserRole">
+                        <span class="input-group-addon"><i class="fa fa-users fa-fw" aria-hidden="true"></i></span>
+                    </label>
+                    <input id="setUserRole" class="form-control" type="text" placeholder="Type your role" autofocus>
+                </div>
+                <p id="registerError" style="color: red; display: none">Password check incorrect or Error mail
+                    address!!!</p>
+            </div>
+            <div class="modalFooter">
+                <button
+                    onclick="document.getElementById('login').style.display = 'block';document.getElementById('register').style.display = 'none';">Cancel</button>
+                <button onclick="register()">Create</button>
+            </div>
+        </div>
+
+        <div id="project">
+            <div id="projectSelector" class="projectSelector">
+                <div id="projectList"></div>
+            </div>
+
+            <div id="projectData" class="projectArea" style="display: none;">
+                <div class="projectAreaLeft">
+                    <div class="projectInfo" style="display: none;">Leader: <span id="projectLeader"></span></div>
+                    <div class="projectInfo" style="display: none;">Start date: <span id="projectStart"></span></div>
+                    <div class="projectInfo" style="display: none;">End date: <span id="projectEnd"></span></div>
+                    <div class="projectInfo" style="display: none;">Status: <span id="projectStatus"></span></div>
+                    <div class="projectInfo" style="display: none;">Status: <span id="projectType"></span></div>
+                    <div class="projectInfo">Team (Name & position):</div>
+                    <div id="projectUsers" class="projectInfo" style="width: 100%"></div>
+                </div>
+                <div class="projectAreaRight">
+                    <div id="chartTasks" class="chart"></div>
+                    <div id="chartUsers" class="chart"></div>
+                </div>
+            </div>
+
+            <div id="projectBoard" class="projectArea">
+                <div id="drag_To do" class="column column0">
+                    <div id="columnTitle_0" class="columnTitle"></div>
+                    <div id="columnContent_0" class="columnContent" ondrop="drop(event, '')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+                <div id="drag_On schedule" class="column column1">
+                    <div id="columnTitle_1" class="columnTitle"></div>
+                    <div id="columnContent_1" class="columnContent" ondrop="drop(event, '1')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+                <div id="drag_Overdue" class="column column2">
+                    <div id="columnTitle_2" class="columnTitle"></div>
+                    <div id="columnContent_2" class="columnContent" ondrop="drop(event, '2')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+                <div id="drag_Done" class="column column3">
+                    <div id="columnTitle_3" class="columnTitle"></div>
+                    <div id="columnContent_3" class="columnContent" ondrop="drop(event, '3')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+                <div id="drag_Canceled" class="column column4">
+                    <div id="columnTitle_4" class="columnTitle"></div>
+                    <div id="columnContent_4" class="columnContent" ondrop="drop(event, '4')"
+                        ondragover="allowDrop(event)" ondragleave="leaveDrop(event)"></div>
+                </div>
+            </div>
+
+            <div id="projectTaskList" class="projectArea" style="display: none;">
+                <div class="projectInfo" style="margin-bottom: 10px;">
+                    <table style="border-bottom: 1px solid blue; width: 97%;">
+                        <tr style="border-bottom: 1px solid blue">
+                            <td><i class="fa fa-list-alt filterBarItem" aria-hidden="true" title="Show all tasks"
+                                    onclick="filterTask('All')"></i><td>
+                            <td><i class="fa fa-clone filterBarItem" aria-hidden="true" title="Show To tasks do"
+                                    onclick="filterTask('0')"></i></td>
+                            <td><i class="fa fa-pencil-square-o filterBarItem" aria-hidden="true"
+                                    title="Show On schedule tasks" onclick="filterTask('1')"></i></td>
+                            <td><i class="fa fa-square-o filterBarItem" aria-hidden="true" title="Show Overdue tasks"
+                                    onclick="filterTask('2')"></i></td>
+                            <td><i class="fa fa-check-square-o filterBarItem" aria-hidden="true" title="Show Done tasks"
+                                    onclick="filterTask('3')"></i></td>
+                            <td><i class="fa fa-window-close-o filterBarItem" aria-hidden="true"
+                                    title="Show Canceled tasks" onclick="filterTask('4')"></i></td>
+                            <td><i class="fa fa-flag-o filterBarItem" aria-hidden="true" title="Show Important tasks"
+                                    onclick="filterTask('Important')"></i></td>
+                            <td><i class="fa fa-star-o filterBarItem" aria-hidden="true" title="Show Favorite tasks"
+                                    onclick="filterTask('Favorite')"></i></td>
+                            <td><input id="searchTask" type="text" onkeyup="searchTask()"
+                                    style="margin-bottom: 0px; margin-top: 3px; background: transparent; width: 90%;"
+                                    placeholder="Search..."></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="tasksList" class="taskList">There are no tasks in this category...</div>
+            </div>
+        </div>
+
+        <div id="taskWindow" class="modalBackgroud">
+            <div class="modalWindow">
+                <div class="modalHeader">Edit task</div>
+                <span onclick="selectView()" class="modalClose" title="Close window">&times;</span>
+                <div class="modalContainer">
+                    <div>
+                        <b><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Task title:</b>
+                        <div id="task" type="text" class="inputData" contenteditable="true"></div>
+                    </div>
+                    <div>
+                        <b>Responsibles:</b><br>
+                        <input id="responsible" type="hidden">
+                        <span id="responsibleAvatar" style="width: 25px !important;"></span>&nbsp;&nbsp;
+                        <i class="fa fa-plus-circle" aria-hidden="true" style="font-size: 1.7em; cursor: pointer;"
+                            onclick="showResponsibleWindow()"></i>
+                    </div>
+                    <br>
+                    <div>
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                        <input id="startDate" type="date" style="width: 130px;"> - <input id="endDate" type="date"
+                            style="width: 130px;">
+                    </div>
+                    <div>
+                        <b>Percentage: </b><span id="percentage">0</span>%<br>
+                        <b>Status:</b>
+                        <select id="status" type="text">
+                            <option value="3">Done/Completado</option>
+                            <option value="1">Doing/Haciendo</option>
+                            <option value="2">Overdue/Atrasado</option>
+                            <option value="4">Canceled/Cancelado</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div>
+                        <b><i class="fa fa-check-square-o" aria-hidden="true"></i> Check list:</b><br>
+                        <div id="checkList" class="checkList"></div>
+                        <input type="text" id="newCheckListItem" name="newCheckListItem" placeholder="Enter new item..."
+                            onkeypress="newCheckListItemPressed()"><br>
+                    </div>
+                    <div>
+                        <div><b><i class="fa fa-comment-o" aria-hidden="true"></i> Comments:</b></div>
+                        <div id="comments" class="inputData" contenteditable="true">
+                        </div>
+                    </div>
+                    <div class="taskMarkers">
+                        <i id="taskImportant" class="fa fa-flag-o" aria-hidden="true" onclick="markTaskAsImportant()"
+                            style="cursor: pointer" title="Mark as important"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <i id="taskFavorite" class="fa fa-star-o" aria-hidden="true" onclick="markTaskAsFavorite()"
+                            style="cursor: pointer" title="Mark as favorite"></i>
+                    </div>
+                    <div>
+                        <b>Area:</b> <input id="area" type="text"><br>
+                        <!--Repeat: <input id="repeat" type="text"><br>-->
+                    </div>
+                    <input id="key" type="hidden">
+                    <input id="important" type="hidden">
+                    <input id="favorite" type="hidden">
+                </div>
+                <div class="modalFooter">
+                    <button onclick="deleteTask()" id="deleteTaskButton">Delete</button>
+                    <button onclick="selectView()">Cancel</button>
+                    <button onclick="updateTask()">Acept</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="newProjectWindow" class="modalBackgroud">
+            <div class="modalWindow">
+                <div class="modalHeader">New project</div>
+                <div class="modalContainer taskModal">
+                    <div class="input-group margin-bottom-sm">
+                        Name: <input id="newProjectName" class="form-control" type="text" placeholder="Project name">
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        Leader: <input id="newProjectLeader" class="form-control" type="hidden"
+                            placeholder="Project leader">
+                        <span id="newProjectLeaderName"></span>
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        Start: <input id="newProjectStart" class="form-control" type="date">
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        End: <input id="newProjectEnd" class="form-control" type="date">
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        Status: <input id="newProjectStatus" class="form-control" type="text"
+                            placeholder="Project status">
+                    </div>
+                    <div class="input-group margin-bottom-sm">
+                        Type: <input id="newProjectType" class="form-control" type="text" placeholder="Project type"
+                            readonly="readonly" value="General project">
+                    </div>
+                </div>
+                <div id="verticalSeparator" class="verticalSeparator"></div>
+                <div class="modalContainer taskModal" value="empty">
+                    <div class="modalSubtitle">Select project template:</div>
+                    <div class="projectTypeItem"
+                        onclick="document.getElementById('newProjectType').value = 'General project'">
+                        <i class="fa fa-file-o fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;General project
+                    </div>
+                    <div class="projectTypeItem"
+                        onclick="document.getElementById('newProjectType').value = 'Daily work'">
+                        <i class="fa fa-file-text-o fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;Daily work
+                    </div>
+                    <div class="projectTypeItem"
+                        onclick="document.getElementById('newProjectType').value = 'Business plan'">
+                        <i class="fa fa-file-powerpoint-o fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;Business plan
+                    </div>
+                    <div class="projectTypeItem"
+                        onclick="document.getElementById('newProjectType').value = 'Research plan'">
+                        <i class="fa fa-files-o fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;Research plan
+                    </div>
+                    <div class="projectTypeItem"
+                        onclick="document.getElementById('newProjectType').value = 'Thesis organization'">
+                        <i class="fa fa-file-word-o fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;Thesis organization
+                    </div>
+                    <div class="projectTypeItem"
+                        onclick="document.getElementById('newProjectType').value = 'Software management'">
+                        <i class="fa fa-file-code-o fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;Software management
+                    </div>
+                    <div class="projectTypeItem"
+                        onclick="document.getElementById('newProjectType').value = 'Meeting organization'">
+                        <i class="fa fa-file-text fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;Meeting organization
+                    </div>
+                    <div class="projectTypeItem"
+                        onclick="document.getElementById('newProjectType').value = 'Party organization'">
+                        <i class="fa fa-file-sound-o fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;Party organization
+                    </div>
+                </div>
+                <div class="modalFooter">
+                    <button onclick="showProjectSelector()">Cancel</button>
+                    <button onclick="createNewProject()">Acept</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="team" class="teamModal" style="display:none;">
+            <div class="modalHeader">
+                <span onclick="document.getElementById('team').style.display='none'" class="modalClose">&times;</span>
+                <span>Team:</span>
+            </div>
+            <div class="chatContent">
+                <div id="teamList" style="font-size: .8em;"></div>
+            </div>
+            <div class="modalFooter" style="position: absolute;bottom: 0;width: 91%;">
+                <button onclick="document.getElementById('team').style.display='none'">Cancel</button>
+                <button onclick="addNewResponsible()">Acept</button>
+            </div>
+        </div>
+
+        <div id="chatWindow" class="chatModal" style="display:none;">
+            <div class="modalHeader">
+                <span onclick="document.getElementById('chatWindow').style.display='none'"
+                    class="modalClose">&times;</span>
+                <span>Instant messenger</span>
+            </div>
+            <div class="chatContent">
+                <div id="chatList" style="font-size: .8em;"></div>
+            </div>
+            <div class="modalFooter" style="position: absolute;bottom: 0;">
+                <input type="text" id="textMsg" onkeypress="keyPressed(event)" placeholder="Text message..."
+                    style="width: 150px;margin-bottom: 0;">
+                <button onclick="sendMsg()" style="width: 49px;">Send</button>
+            </div>
+        </div>
+
+        <div id="optionsSideBar" class="optionsBar" style="display: none">
+            <ul id="usersOptionsSideBar">
+                <li><a href="#" onclick="closeAllWindows();document.getElementById('register').style.display = 'block'">
+                        <i class="fa fa-user-circle-o" aria-hidden="true"></i> My profile...
+                    </a>
+                </li>
+                <li><a href="#" onclick="showInvitationWindow()">
+                        <i class="fa fa-user-plus" aria-hidden="true"></i> Invite user...
+                    </a>
+                </li>
+                <li><a href="#" onclick="location.reload();">
+                        <i class="fa fa-user-times" aria-hidden="true"></i> Logout
+                    </a>
+                </li>
+            </ul>
+            <ul id="projectOptionsSideBar" style="display:none;">
+                <li>
+                    <hr style="width: 120px;">
+                </li>
+                <li><a href="#" onclick="addNewTask()">
+                        <i class="fa fa-plus-square" aria-hidden="true"></i> New Task
+                    </a>
+                </li>
+                <li>
+                    <hr style="width: 120px;">
+                </li>
+                <li><a href="#" onclick="showProjectSelector()">
+                        <i class="fa fa-home" aria-hidden="true"></i> My projects
+                    </a>
+                </li>
+                <li><a href="#" onclick="showSelectedProject()">
+                        <i class="fa fa-columns" aria-hidden="true"></i> Board
+                    </a>
+                </li>
+                <li><a href="#" onclick="showProjectTaskList()">
+                        <i class="fa fa-list-alt" aria-hidden="true"></i> Task List
+                    </a>
+                </li>
+                <!--li><a href="#" onclick="showProjectSelector()">
+                                                    <i class="fa fa-calendar" aria-hidden="true"></i> Calendar
+                                                </a>
+                                            </li-->
+                <li><a href="#" onclick="openProjectInfo()">
+                        <i class="fa fa-bar-chart" aria-hidden="true"></i> Statistics
+                    </a>
+                </li>
+                <li>
+                    <hr style="width: 120px;">
+                </li>
+                <li><a href="#" onclick="showMessenger()">
+                        <i class="fa fa-comment-o" aria-hidden="true"></i> Mesenger
+                    </a>
+                </li>
+                <li>
+                    <hr style="width: 120px;">
+                </li>
+                <li><a href="#" onclick="showProjectSettings()">
+                        <i class="fa fa-cog" aria-hidden="true"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!--<div id="optionsButtons2" class="buttons" style="display:none;">
+            <div class="btnCircular btnAddTask" onclick="addNewTask()" title="Add new task"><img src="./plus.png"
+                    class="newIcon"></div>
+            <div class="btnCircular btnProjects" onclick="showProjectSelector()" title="Show projects"><img
+                    src="./projects.png" class="newIcon"></div>
+            <div class="btnCircular btnMessenger" onclick="showMessenger()" title="Show messenger"><img src="./chat.png"
+                    class="newIcon"></div>
+            <div class="btnCircular btnVideoChat" onclick="showVideoChat()" title="Video chat"><img src="./video.png"
+                    class="newIcon"></div>
+        </div>-->
+
+    </div>
+
+    <div class="footer">
+        <span style="float: left">&copy; 2019 by<a href="https://dta-labs.github.io/projects">DTA Labs</a></span>
+        <span style="float: right; margin-right: 10px;">Powered by<a
+                href="https://www.dwrobelconsulting.com">DWConsulting
+                Professional Services</a></span>
+    </div>
+
+</body>
+
+</html>

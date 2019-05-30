@@ -1,0 +1,630 @@
+/* #region Document */
+
+body {
+    font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif';
+    margin: 0;
+    background: #f6f6f6;
+    /*background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1327/ea2797cc133dd55efca420e44ac8e6ef/photo-1549558549-415fe4c37b60");
+    background-image: url("https://png.pngtree.com/thumb_back/fw800/back_pic/00/01/54/555604115c64ab3.jpg");*/
+    background-image: url("https://png.pngtree.com/thumb_back/fw800/back_pic/03/54/60/44579ade8d7ed0b.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
+
+.container {
+    width: 100%;
+    padding-top: 105px;
+}
+
+#userName {
+    color: white;
+    position: relative;
+    top: -10px;
+}
+
+.main {
+    min-height: 75vh;
+    padding: 10px;
+}
+
+.footer {
+    background: rgba(0, 0, 0, .35);
+    padding: 10px;
+    clear: both;
+    color: wheat;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer a {
+    padding: 10px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    background: rgba(0, 0, 0, 0.5);
+    margin: 7px;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.avatar {
+    border-radius: 50%;
+    width: 35px;
+    border: 1px solid gray;
+    box-shadow: 2px 2px 4px black;
+}
+
+.chart {
+    height: 300px;
+    margin: 20px 10px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    box-shadow: 2px 2px 4px black;
+}
+
+.btnCircular {
+    position: fixed;
+    right: 30px;
+    z-index: 11;
+    border-radius: 50%;
+    height: 40px;
+    cursor: pointer;
+    box-shadow: 2px 2px #3f51b5;
+}
+
+.btnAddTask {
+    bottom: 165px;
+}
+
+.btnProjects {
+    bottom: 120px;
+}
+
+.btnVideoChat {
+    bottom: 75px;
+}
+
+.btnMessenger {
+    bottom: 30px;
+}
+
+.newIcon {
+    width: 40px;
+    margin-bottom: 40px;
+}
+
+.openCloseProjectInfos {
+    cursor: pointer;
+}
+
+
+/* #endregion */
+
+/* #region Project*/
+
+.projectName {
+    display: block;
+    color: #fff;
+    font-size: .5em;
+    margin-top: -5px;
+}
+
+.projectArea {
+    display: grid;
+    grid-template-areas: "projectAreaLeft projectAreaLeft projectAreaRight projectAreaRight projectAreaRight"
+        "column0 column1 column2 column3 column4 ";
+    height: calc(100vh - 170px);
+    background: rgba(255, 255, 255, .3);
+    border-radius: 5px;
+    border: 1px solid gray;
+    padding: 3px;
+    margin: 5px;
+    box-shadow: 2px 2px 4px black;
+}
+
+.projectData {
+    background: white;
+}
+
+.projectInfo {
+    font-size: 1.2em;
+    margin-left: 3%;
+    text-shadow: 1px 1px 2px black;
+}
+
+.projectInfo span {
+    font-style: italic;
+}
+
+.userPicture {
+    float: left;
+}
+
+.userInfo {
+    width: 100%;
+    margin-left: 50px;
+    margin-bottom: 5px;
+}
+
+.userName {
+    font-size: 1em;
+}
+
+.userPosition {
+    position: relative;
+    top: -10px;
+    font-size: .8em;
+}
+
+.deleteProjectIcon {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 1.2em;
+}
+
+.taskChechList {
+    font-size: .5em;
+    padding-left: 50px;
+    background: white;
+}
+
+.taskChechList .checkboxControl {
+    transform: scale(1);
+    margin-top: 5px;
+}
+
+.taskChechList .checkItemOptions {
+    display: none;
+}
+
+/* #endregion */
+
+/* #region Columns*/
+
+.column {
+    width: calc(95vw / 5);
+    padding: 3px;
+}
+
+.columnTitle {
+    text-align: center;
+    margin-bottom: 10px;
+    border-bottom: 3px solid #3f51b5;
+    color: aliceblue;
+    text-shadow: 1px 1px 4px black;
+    font-weight: 700;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.columnContent {
+    height: calc(100vh - 210px);
+    overflow-y: auto;
+}
+
+/* #endregion*/
+
+/* #region Task*/
+
+.taskTile {
+    border: 1px solid black;
+    border-radius: 3px;
+    width: 96%;
+    margin-bottom: 5px;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 5px solid black;
+    background: whitesmoke;
+    box-shadow: 2px 2px 4px black;
+}
+
+.taskDone {
+    border: 1px solid green;
+    border-left: 5px solid green;
+}
+
+.taskOnSchedule {
+    border: 1px solid #3f51b5;
+    border-left: 5px solid #3f51b5;
+}
+
+.taskOverdue {
+    border: 1px solid yellow;
+    border-left: 5px solid yellow;
+}
+
+.taskCanceled {
+    border: 1px solid red;
+    border-left: 5px solid red;
+}
+
+.taskList {
+    color: black;
+    font-size: 1.5em;
+    height: 67vh;
+    overflow-y: auto;
+    margin-left: 3%;
+    width: 97%;
+}
+
+.taskTitle {
+    font-size: .8em;
+    padding-left: 10px;
+    background: white;
+}
+
+.taskBar {
+    background: #efefef;
+    font-size: .55em;
+    border-radius: 0 0 5px 5px;
+}
+
+.taskDates {
+    padding-left: 10px;
+    float: left;
+}
+
+.taskResponsibles {
+    float: right;
+    padding-right: 10px;
+}
+
+.taskMarkers {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.taskDrag {
+    -ms-transform: rotate(5deg);
+    /* IE 9 */
+    -webkit-transform: rotate(5deg);
+    /* Safari 3-8 */
+    transform: rotate(5deg);
+}
+
+/* #endregion*/
+
+/* #region Modal*/
+
+.login {
+    position: relative;
+    width: calc(100vw/2);
+    top: 50px;
+    left: calc(100vw/4);
+    border-radius: 5px;
+    background: white;
+    border: 1px solid blue;
+    box-shadow: 2px 2px 3px black;
+}
+
+.modalWindow {
+    position: relative;
+    width: calc(100vw/2 + 100vw/8);
+    left: calc(100vw/6);
+    border: 1px solid blue;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 2px 2px 3px black;
+    margin-top: 20px;
+    margin-bottom: 60px;
+}
+
+.modalHeader {
+    background: #f6f6f6;
+    border-radius: 5px 5px 0 0;
+    padding: 10px 10px 10px 20px;
+    font-weight: 700;
+    border-bottom: 1px solid gray;
+    text-align: center;
+}
+
+.modalSubtitle {
+    font-weight: 700;
+    border-bottom: 1px solid gray;
+}
+
+.modalContainer {
+    background: white;
+    padding: 15px;
+}
+
+.modalBody {
+    padding: 20px 10px 30px 30px;
+}
+
+.modalFooter {
+    background: #f6f6f6;
+    border-radius: 0 0 5px 5px;
+    padding: 10px;
+    border-top: 1px solid gray;
+    text-align: right;
+    clear: both;
+}
+
+.projectBox {
+    position: relative;
+    top: 20px;
+    background: #f6f6f6;
+    border-radius: 5px;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    float: left;
+    margin: 20px 30px;
+    cursor: pointer;
+    display: flex;
+    border: 1px solid blue;
+    box-shadow: 2px 2px 3px black;
+}
+
+.projectBoxName {
+    display: flex;
+    align-items: center;
+    font-size: 1.5em;
+    width: 200px;
+    justify-content: center;
+}
+
+.projectTypeItem {
+    padding: 5px;
+    margin: 5px;
+}
+
+.projectTypeItem:hover {
+    border: 1px solid gray;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button {
+    border-radius: 5px;
+    width: 100px;
+    padding: 5px;
+}
+
+input,
+.inputData {
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 95%;
+    padding: 5px;
+    border: 1px solid gray;
+    text-align: justify;
+}
+
+.checkItemTable {
+    border-spacing: 0px;
+    width: 100%;
+}
+
+.checkboxControl {
+    width: 20px;
+    transform: scale(1.5);
+    margin-top: 7px;
+    cursor: pointer;
+}
+
+.checkItemOptions:hover {
+    cursor: pointer;
+    background: lightgrey;
+}
+
+.checkItem:hover {
+    background: whitesmoke;
+    border-radius: 5px;
+}
+
+.chatWindow {
+    width: 350px;
+    height: 500px;
+    bottom: -50px;
+    right: -150px;
+}
+
+.chatContent {
+    height: 200px;
+    overflow-y: auto;
+    padding: 0 5px 5px 5px;
+}
+
+.chatFooter {
+    bottom: 0px;
+    position: absolute;
+    width: 100%;
+}
+
+.chatModal {
+    position: fixed;
+    bottom: 50px;
+    right: 30px;
+    background: #f2fefe;
+    width: 250px;
+    height: 300px;
+    border: 1px solid blue;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px black;
+}
+
+.teamModal {
+    position: fixed;
+    bottom: 30px;
+    right: 80px !important;
+    background: #f2fefe;
+    width: 250px;
+    height: 300px;
+    border: 1px solid blue;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px black;
+}
+
+.modalClose {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+#textMsg {
+    margin-top: 2px;
+    padding: 6px;
+    width: 235px;
+}
+
+/* #endregion */
+
+/* #region Menu */
+
+header {
+    /*background: rgba(0, 0, 0, 0.45);*/
+    width: 100%;
+    position: fixed;
+    z-index: 100;
+}
+
+.headerTitle {
+    background: rgba(0, 0, 0, 0.35);
+    padding: 10px;
+    height: 45px;
+}
+
+.header-img {
+    width: 140px;
+    height: 45px;
+}
+
+.header-left {
+    float: left;
+    margin-right: 30px;
+}
+
+.header-main {
+    color: white;
+    float: left;
+    margin-top: -12px;
+    font-size: 2em;
+}
+
+.projectAreaLeft {
+    color: white;
+    text-shadow: 1px 1px 4px grey;
+    float: left;
+    width: 320px;
+}
+
+.projectAreaRight {
+    height: 72vh;
+    overflow-y: auto;
+}
+
+.userOptions {
+    margin-top: 5px;
+    text-align: right;
+    float: right;
+}
+
+.optionsMenu {
+    float: right;
+    cursor: pointer;
+    font-size: 1.8em;
+    padding: 0px 10px 0px 20px;
+    color: white;
+    margin-top: 12px;
+}
+
+.optionsButtons {
+    background: rgba(0, 0, 0, 0.2);
+    float: left;
+    width: 100%;
+    font-size: .9em;
+}
+
+.optionsBar {
+    float: right;
+    width: 130px;
+    position: fixed;
+    top: 65px;
+    background: whitesmoke;
+    z-index: 999;
+    right: 5px;
+    border: 1px solid gray;
+    box-shadow: 2px 2px 2px black;
+    border-radius: 5px;
+    padding: 10px 10px 10px 0px;
+}
+
+.optionsBar ul li a {
+    padding: 3px;
+    width: 115px;
+    color: black;
+}
+
+.optionsBar ul li a:hover {
+    background: rgba(0, 0, 0, 0.5);
+    margin: 0px;
+    padding: 3px;
+    border-radius: 5px;
+    color: white;
+}
+
+ul {
+    list-style: none;
+    overflow: hidden;
+    padding: 0 0 0 10px;
+    margin: 0;
+    float: left;
+}
+
+ul li {
+    float: left;
+}
+
+ul li a {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 1px 1px 4px black;
+}
+
+ul li a:hover {
+    background: rgba(0, 0, 0, 0.5);
+    margin: 7px;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.filterBar {
+    position: relative;
+    float: right;
+    margin-right: 30px;
+    font-size: .7em;
+}
+
+.filterBarItem {
+    margin: 0px;
+    padding: 10px 0px;
+}
+
+.taskModal {
+    width: 45%;
+    float: left;
+}
+
+.verticalSeparator {
+    border-left: 1px solid grey;
+    margin: 10px 0 10px 0;
+    height: 410px;
+    float: left;
+}
+
+/* #endregion */
+

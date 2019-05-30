@@ -1,0 +1,143 @@
+@media screen and (max-width: 600px) {
+    .container {
+        padding-top: 50px;
+    }
+
+    .taskList {
+        height: 80vh;
+    }
+
+    .optionsBar {
+        top: 45px;
+    }
+
+    .optionsMenu {
+        margin-top: 0px;
+    }
+
+    button {
+        width: 70px;
+    }
+
+    .projectBox {
+        width: 150px;
+        height: 150px;
+        font-size: 1.2em;
+        margin: 10px 15px;
+    }
+
+    .projectBoxName {
+        font-size: 1em;
+    }
+
+    .header-main {
+        margin-top: -5px;
+        font-size: 1em;
+        width: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .projectArea {
+        display: grid;
+        grid-template-areas: "projectAreaRight""projectAreaLeft""column0""column1""column2""column3""column4";
+        height: 88vh;
+        overflow-y: auto;
+    }
+
+    .column {
+        width: 100%;
+    }
+
+    .column {
+        width: 100%;
+        padding: 3px;
+    }
+
+    .columnContent {
+        height: 100px;
+    }
+
+    .login {
+        width: calc(100vw/2 + 100vw/4);
+        left: calc(100vw/8);
+    }
+
+    .footer {
+        display: none;
+    }
+
+    .optionsButtons {
+        display: none !important;
+    }
+
+    .headerTitle {
+        height: 25px;
+    }
+
+    .header-left {
+        margin-right: 10px;
+    }
+
+    .header-img {
+        width: 70px;
+        height: 23px;
+    }
+
+    .projectName {
+        font-size: .7em;
+    }
+
+    .userOptions {
+        margin-top: -5px;
+    }
+
+    #userName {
+        display: none;
+    }
+
+    .avatar {
+        width: 30px;
+    }
+
+    .modalWindow {
+        width: 90%;
+        left: 5%;
+        font-size: .7em;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .header-main {
+        margin-top: -5px;
+        font-size: 1em;
+        width: 150px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .projectBox {
+        width: 140px;
+        height: 140px;
+        margin: 10px 15px;
+    }
+
+    .verticalSeparator {
+        display: none;
+    }
+
+    .taskModal {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .projectBox {
+        width: 120px;
+        height: 120px;
+        margin: 10px 15px;
+        font-size: .9em;
+    }
+}
