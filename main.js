@@ -683,7 +683,143 @@ function getThesisTasks() {
     let columns = ["To-do/Tareas", "Doing/Haciendo", "Overdue/Atrasadas", "Done/Completadas", "Review/Revisión"];
     let tasks = {
         task_01: {
-            task: "Task 1",
+            task: "Title / Título",
+            area: "",
+            startDate: "",
+            endDate: "",
+            percentage: "0",
+            comments: "This is one of the most important points in a thesis or scientific-technical report. It must contain the problem to be solved or objective, as well as the solution and, until the object of action is specified, if possible. However, it should NOT be that long. It is suggested that it does not exceed 12 words. / Este es uno de los puntos más importantes en una tesis o informe científico-técnico. Debe contener el problema a resolver u objetivo, así como la solución y, hasta especificar el objeto de acción si fuere posible. Sin embargo NO debe ser tan largo. Se sugiere que no pase de 12 palabras.",
+            responsible: "",
+            repeat: "",
+            status: ""
+        },
+        task_02: {
+            task: "Abstract / Resumen",
+            area: "",
+            startDate: "",
+            endDate: "",
+            percentage: "0",
+            comments: "It must contain between 200 and 500 characters and includes the following topics: • Problematic, is the problem to solve, be it theoretical or practical, that is, the object of investigation (1 or 2 sentences). • Scientific problem, is the real problem that you are going to affect with your solution, that is, the field of action (1 sentence). • Objective, it answers three fundamental questions: what? how? for what? (how? may be optional) (1 sentence). • Proposed solution (the necessary prayers). • Main results (the necessary prayers). • Scope, that is, for what else could the proposed solution be used (1 sentence). / Debe contener entre 200 y 500 caracteres e incluye los siguientes tópicos: • Problemática, que no es más que el problema a resolver ya sea teórico o práctico, o sea el objeto de investigación (1 ó 2 oraciones). • Problema científico, que es el problema real en el que vas a incidir con tu solución, o sea el campo de acción (1 oración). • Objetivo, no deben olvidar que éste responde a tres preguntas fundamentales: qué? cómo? para qué? (el cómo? pudiera no estar) (1 oración). • Solución propuesta (las oraciones necesarias). • Resultados principales (las oraciones necesarias). • Alcance, o sea, para qué más podría ser empleada la solución propuesta (1 oración).",
+            responsible: "",
+            repeat: "",
+            status: ""
+        },
+        task_03: {
+            task: "Introduction / Introducción",
+            area: "",
+            startDate: "",
+            endDate: "",
+            percentage: "0",
+            comments: "",
+            responsible: "",
+            repeat: "",
+            status: "",
+            checkList: [{
+                "item": "Problematic (customer problem) / Problemática (problema del cliente)",
+                "status": false
+            }, {
+                "item": "Scientific problem / Problema científico",
+                "status": false
+            }, {
+                "item": "Objective / Objetivo",
+                "status": false
+            }, {
+                "item": "Scope / Alcance",
+                "status": false
+            }, {
+                "item": "Organization of the article / Organización del artículo",
+                "status": false
+            }]
+        },
+        task_04: {
+            task: "Materials and methods / Materiales y métodos",
+            area: "",
+            startDate: "",
+            endDate: "",
+            percentage: "0",
+            comments: "",
+            responsible: "",
+            repeat: "",
+            status: "",
+            checkList: [{
+                "item": "General requirements / Requerimientos generales",
+                "status": false
+            }]
+        },
+        task_05: {
+            task: "Experimental design / Diseño experimental",
+            area: "",
+            startDate: "",
+            endDate: "",
+            percentage: "0",
+            comments: "",
+            responsible: "",
+            repeat: "",
+            status: "",
+            checkList: [{
+                "item": "Variables definition and sample space / Definición de las variables y del espacio muestral",
+                "status": false
+            }, {
+                "item": "Factors definition and their levels / Definición de los factores y sus niveles",
+                "status": false
+            }, {
+                "item": "Identifying the type of experiment / Identificar el tipo de experimento",
+                "status": false
+            }]
+        },
+        task_06: {
+            task: "Data analysis / Análisis de los datos",
+            area: "",
+            startDate: "",
+            endDate: "",
+            percentage: "0",
+            comments: "",
+            responsible: "",
+            repeat: "",
+            status: "",
+            checkList: [{
+                "item": "Perform enough replications to create a representative body of data / Realizar múltiples réplicas para lograr representatividad",
+                "status": false
+            }, {
+                "item": "Record observations and analyze what the data means / Registrar las observaciones y analizar lo que significan los datos",
+                "status": false
+            }, {
+                "item": "Prepare tables and/or graphs of the data / Preparar tablas y/o gráficas de los datos",
+                "status": false
+            }, {
+                "item": "Understand the likely distribution of your data / Analizar la distribución de los datos",
+                "status": false
+            }, {
+                "item": "Employ the exploratory and inferential analysis used in your field of science / Emplee el análisis exploratorio e inferencial utilizado en su campo de la ciencia",
+                "status": false
+            }]
+        },
+        task_07: {
+            task: "Results analysis and draw conclusions / Análisis de los resultados y llegar a conclusiones",
+            area: "",
+            startDate: "",
+            endDate: "",
+            percentage: "0",
+            comments: "",
+            responsible: "",
+            repeat: "",
+            status: "",
+            checkList: [{
+                "item": "Experimental results analysis and evaluation / Análisis y evaluación de resultados experimentales.",
+                "status": false
+            }, {
+                "item": "Compare the results both to the original hypothesis and the conclusions of previous experiments by other researchers / Compare los resultados tanto con la hipótesis original como con las conclusiones de experimentos anteriores realizados por otros investigadores",
+                "status": false
+            }, {
+                "item": "Explain what the results mean and how to view them in the context of the scientific field or real-world environment / Explicar qué significan los resultados y cómo verlos en el contexto del campo científico o del entorno del mundo real",
+                "status": false
+            }, {
+                "item": "Make suggestions for future research / Hacer sugerencias para investigaciones futuras",
+                "status": false
+            }]
+        },
+        task_08: {
+            task: "Conclusions / Conclusiones",
             area: "",
             startDate: "",
             endDate: "",
@@ -693,8 +829,8 @@ function getThesisTasks() {
             repeat: "",
             status: ""
         },
-        task_02: {
-            task: "Task 2",
+        task_09: {
+            task: "Bibliographic references / Referencias bibliográficas",
             area: "",
             startDate: "",
             endDate: "",

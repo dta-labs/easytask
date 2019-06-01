@@ -1,3 +1,10 @@
+@media screen and (max-width: 980px) {
+    .modalWindow {
+        width: 80%;
+        left: calc(100vw/2 - 40%);
+    }
+}
+
 @media screen and (max-width: 600px) {
     .container {
         padding-top: 50px;
