@@ -111,9 +111,8 @@
                     <input id="userMail" class="form-control" type="text" placeholder="Email address" autofocus>
                 </div>
                 <div class="input-group">
-                    </span>
                     <label for="userPassword"><span class="input-group-addon"><i class="fa fa-key fa-fw"
-                                aria-hidden="true"></i></label>
+                                aria-hidden="true"></i></span></label>
                     <input id="userPassword" class="form-control" type="password" placeholder="Password"
                         onkeypress="pswKeyPressed()">
                 </div>
@@ -246,7 +245,7 @@
                     <table style="border-bottom: 1px solid blue; width: 97%;">
                         <tr style="border-bottom: 1px solid blue">
                             <td><i class="fa fa-list-alt filterBarItem" aria-hidden="true" title="Show all tasks"
-                                    onclick="filterTask('All')"></i><td>
+                                    onclick="filterTask('All')"></i></td>
                             <td><i class="fa fa-clone filterBarItem" aria-hidden="true" title="Show To tasks do"
                                     onclick="filterTask('0')"></i></td>
                             <td><i class="fa fa-pencil-square-o filterBarItem" aria-hidden="true"
@@ -324,6 +323,9 @@
                     <div>
                         <b>Area:</b> <input id="area" type="text"><br>
                         <!--Repeat: <input id="repeat" type="text"><br>-->
+                    </div>
+                    <div>
+                        <input type="file" id="fileLoad">
                     </div>
                     <input id="key" type="hidden">
                     <input id="important" type="hidden">

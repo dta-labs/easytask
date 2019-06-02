@@ -18,6 +18,7 @@ let viewIndex = 1;
 
 window.onload = function () {
     viewIndex = (screen.width > 480) ? 1 : 2;
+    setFileUploadEvent();
     initializeFirebase();
     initializeUI();
     loadUsersFromFB();
@@ -81,6 +82,27 @@ function spawnNotification(theBody, theIcon, theTitle) {
         icon: theIcon
     }
     let n = new Notification(theTitle, options);
+}
+
+function setFileUploadEvent() {
+    document.getElementById('fileLoad').addEventListener('change', function (event) {
+        event.preventDefault();
+        let file = event.target.files[0];
+        loadFileToFB(file);
+    });
+}
+
+function loadFileToFB(file) {
+    let refStorage = firebase.storage().ref('micarpeta').child(file.name);
+    let uploadTask = refStorage.put(file);
+    uploadTask.on('state_changed', null,
+        function (error) {
+            alert('Error loading file: ', error);
+        },
+        function () {
+            alert('File loading successful');
+        }
+    );
 }
 
 // #endregion
