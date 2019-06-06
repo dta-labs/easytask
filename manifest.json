@@ -1,7 +1,7 @@
 {
-    "name": "DTA Task Management System",
-    "short_name": "DTA-TMS",
-    "description": "Free Planning System for task management",
+    "name": "EasyTask Management System",
+    "short_name": "EasyTask",
+    "description": "EasyTask the DTA Labs free Planning System for task management.",
     "background_color": "#2B2B2B",
     "theme_color": "#0000EF",
     "orientation": "portrait",

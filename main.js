@@ -86,14 +86,16 @@ function spawnNotification(theBody, theIcon, theTitle) {
 
 function setFileUploadEvent() {
     document.getElementById('fileLoad').addEventListener('change', function (event) {
+        let taskKey = document.getElementById("key").value;
+        let fileList = document.getElementById("fileList").value;
         event.preventDefault();
         let file = event.target.files[0];
-        loadFileToFB(file);
+        loadFileToFB(file, taskKey, fileList);
     });
 }
 
-function loadFileToFB(file) {
-    let refStorage = firebase.storage().ref('micarpeta').child(file.name);
+function loadFileToFB(file, taskKey, fileList) {
+    let refStorage = firebase.storage().ref(actualProject.key + '/' + taskKey).child(file.name);
     let uploadTask = refStorage.put(file);
     uploadTask.on('state_changed', null,
         function (error) {
@@ -101,8 +103,14 @@ function loadFileToFB(file) {
         },
         function () {
             alert('File loading successful');
+            fileList += file.name + ',';
+            updateTaskFileList(actualProject.key, taskKey, fileList);
         }
     );
+}
+
+function updateTaskFileList(projectKey, taskKey, fileList) {
+    firebase.database().ref(projectKey + "/tasks/" + taskKey + "/fileList/").set(fileList);
 }
 
 // #endregion
@@ -318,7 +326,8 @@ function getNewIndex(list) {
             result = id;
         }
     }
-    return result + 1;
+    result++;
+    return (result < 10) ? "0" + result : result;
 }
 
 function setProjectData() {
@@ -1403,6 +1412,8 @@ function showFrom(task, taskKey, showDeleteButton) {
     document.getElementById("status").value = task.status;
     //document.getElementById("repeat").value = task.repeat;
     document.getElementById("checkList").innerHTML = getCheckListHTML(taskKey, task.checkList);
+    document.getElementById("fileList").value = task.fileList;
+    document.getElementById("fileListUI").value = sowFileList(task.fileList);
     document.getElementById("important").value = task.important;
     document.getElementById("favorite").favorite = task.favorite;
     let taskImportant = (task.important == 'true') ? 'fa fa-flag' : 'fa fa-flag-o';
@@ -1485,6 +1496,20 @@ function getCheckListHTML(taskKey, checkList) {
     return result;
 }
 
+function sowFileList(fileList) {
+    let result = "";
+    let fileArray = fileList.split(",");
+    fileArray.forEach (file => {
+        if (file) {
+            result += `
+                <div style="float: left; text-align: center;" title="View ${file}">
+                    <span><i class="fa fa-file"></i><br>${file}</span>
+                </div>
+            `;
+        }
+    });
+}
+
 function convetCheckItemToTask(taskKey, checkListKey) {
     calculatePercentage();
     //firebase.database().ref("projects/" + actualProject.key + "/tasks/" + taskKey + "/checkList/" + checkListKey).remove();
@@ -1534,7 +1559,8 @@ function updateTask() {
         //repeat: document.getElementById("repeat").value,
         checkList: getTaskCheckList(),
         important: document.getElementById("important").value,
-        favorite: document.getElementById("favorite").value
+        favorite: document.getElementById("favorite").value,
+        fileList: document.getElementById("fileList").value
     }
     updateTaskInFB(task, taskKey);
 }
