@@ -4,8 +4,6 @@ urlsToCache = [
     './',
     'https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
     'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
-    './main.css',
-    './main.js',
     './image.png'
 ]
 
