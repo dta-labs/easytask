@@ -151,4 +151,9 @@
         margin: 10px 15px;
         font-size: .9em;
     }
+
+    .searchTable {
+        width: 320px;
+    }
+        
 }

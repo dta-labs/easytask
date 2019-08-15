@@ -140,6 +140,12 @@ body {
     font-style: italic;
 }
 
+.userCard {
+    clear: both;
+    margin-bottom: 10px;
+    height: 40px;
+}
+
 .userPicture {
     float: left;
 }
@@ -291,6 +297,18 @@ body {
     transform: rotate(5deg);
 }
 
+.searchTable {
+    width: 480px;
+}
+
+.fileItem {
+    float: left;
+    text-align: center;
+    width: 100px;
+    overflow: auto;
+    margin: 0 3px;
+}
+
 /* #endregion*/
 
 /* #region Modal*/
@@ -306,6 +324,29 @@ body {
     box-shadow: 2px 2px 3px black;
 }
 
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 2;
+    /* Sit on top */
+    padding-top: 100px;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+}
+
 .modalWindow {
     position: relative;
     width: calc(100vw/2 + 100vw/8);
@@ -315,7 +356,22 @@ body {
     background: white;
     box-shadow: 2px 2px 3px black;
     margin-top: 20px;
-    margin-bottom: 60px;
+    margin-bottom: 160px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .modalHeader {
@@ -464,6 +520,7 @@ input,
     border: 1px solid blue;
     border-radius: 5px;
     box-shadow: 2px 2px 3px black;
+    z-index: 3;
 }
 
 .modalClose {
@@ -487,7 +544,7 @@ header {
     /*background: rgba(0, 0, 0, 0.45);*/
     width: 100%;
     position: fixed;
-    z-index: 100;
+    z-index: 1;
 }
 
 .headerTitle {
@@ -553,7 +610,7 @@ header {
     position: fixed;
     top: 65px;
     background: whitesmoke;
-    z-index: 999;
+    z-index: 2;
     right: 5px;
     border: 1px solid gray;
     box-shadow: 2px 2px 2px black;
@@ -628,3 +685,72 @@ ul li a:hover {
 
 /* #endregion */
 
+/* #region Splash*/
+
+.splashWindow {
+    position: relative;
+    width: 60%;
+    margin: auto;
+    text-align: center;
+    top: -50px;
+}
+
+.startSection {
+    margin-bottom: 60px;
+}
+
+.startText {
+    color: white;
+    text-shadow: 2px 2px 6px darkslategrey;
+}
+
+.startTitle {
+    font-size: 3em;
+}
+
+.startSubTitle {
+    font-size: 1.7em;
+}
+
+.startList {
+    text-align: left;
+    font-size: 1.7em;
+}
+
+.startButton {
+    border: 1px solid #45006b;
+    padding: 10px 30px;
+    border-radius: 7px;
+    text-decoration: none;
+}
+
+.startList {
+    list-style: square inside;
+}
+
+.startList li {
+    clear: both;
+}
+
+.splash {
+    width: 100%;
+}
+
+@media screen and (max-width: 480px) {
+    .splashWindow {
+        width: 80%;
+        top: 0px;
+    }
+
+    .startTitle {
+        font-size: 2.5em;
+    }
+
+    .startSubTitle {
+        font-size: 1.3em;
+    }
+}
+
+/* #endregion*/
+
+/* #region Modal */

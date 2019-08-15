@@ -10,13 +10,19 @@ let projectsList;
 let actualProject;
 let actualProjectKey;
 let tasksList;
+let actualTaskKey
 let newTaskIndex = 0;
 let newProjectIndex = 0;
 let showProjectInfo = false;
 let showChat = false;
 let viewIndex = 1;
+let modal;
+let close;
+let attachedFiles = [];
 
 window.onload = function () {
+    modal = document.getElementById('myModal');
+    close = document.getElementsByClassName("close")[0];
     viewIndex = (screen.width > 480) ? 1 : 2;
     setFileUploadEvent();
     initializeFirebase();
@@ -24,6 +30,56 @@ window.onload = function () {
     loadUsersFromFB();
     loadProjectsFromFB();
 };
+
+window.onclick = function (event) {
+    if (event.target == modal || event.target == close) {
+        updateTask();
+        modal.style.display = "none";
+    }
+}
+
+// #region UI
+
+function initializeUI() {
+    selectWindow('splash');
+    //document.getElementById('splashImg').setAttribute('src', screen.width < screen.height ? 'recursos/splash_mobil.png' : 'recursos/splash_pc.png');
+    //document.getElementById('splash').style.width = screen.width < screen.height ? '70%' : '50%';
+    //document.getElementById('splash').style.left = screen.width < screen.height ? 'calc(100vw/7)' : 'calc(100vw/4)';
+}
+
+function selectWindow(ventana) {
+    closeAllWindows();
+    document.getElementById(ventana).style.display = 'block';
+}
+
+function selectView() {
+    closeAllWindows();
+    switch (viewIndex) {
+        case 1:
+            showSelectedProject();
+            break;
+        case 2:
+            showProjectTaskList();
+            break;
+        default:
+            showProjectSelector();
+    }
+}
+
+function closeAllWindows() {
+    let ventanas = document.getElementsByClassName('ventana');
+    for (let i = 0; i < ventanas.length; i++) {
+        ventanas[i].style.display = 'none';
+    }
+}
+
+function showProjectSelector() {
+    closeAllWindows();
+    showProjectsList();
+    document.getElementById('projectSelector').style.display = 'block';
+}
+
+// #endregion
 
 // #region Firebase
 
@@ -34,7 +90,8 @@ function initializeFirebase() {
         databaseURL: "https://dwplanning-fd04c.firebaseio.com",
         projectId: "dwplanning-fd04c",
         storageBucket: "dwplanning-fd04c.appspot.com",
-        messagingSenderId: "1042985627662"
+        messagingSenderId: "1042985627662",
+        appId: "1:1042985627662:web:4191afccd69de798"
     };
     firebase.initializeApp(config);
 }
@@ -84,33 +141,30 @@ function spawnNotification(theBody, theIcon, theTitle) {
     let n = new Notification(theTitle, options);
 }
 
-function setFileUploadEvent() {
-    document.getElementById('fileLoad').addEventListener('change', function (event) {
-        let taskKey = document.getElementById("key").value;
-        let fileList = document.getElementById("fileList").value;
-        event.preventDefault();
-        let file = event.target.files[0];
-        loadFileToFB(file, taskKey, fileList);
+function loadFileToFB(taskKey) {
+    attachedFiles.forEach(file => {
+        let refStorage = firebase.storage().ref(actualProject.key + '/' + taskKey).child(file.name).put(file)
+            .then(snapshot => {
+                return snapshot.ref.getDownloadURL();
+            })
+            .then(downloadURL => {
+                updateTaskFileList(actualProject.key, taskKey, file.name, downloadURL);
+                console.log(`Successfully uploaded file and got download link - ${downloadURL}`);
+                return downloadURL;
+            })
+            .catch(error => {
+                console.log(`Failed to upload file - ${error}`);
+            })
     });
 }
 
-function loadFileToFB(file, taskKey, fileList) {
-    let refStorage = firebase.storage().ref(actualProject.key + '/' + taskKey).child(file.name);
-    let uploadTask = refStorage.put(file);
-    uploadTask.on('state_changed', null,
-        function (error) {
-            alert('Error loading file: ', error);
-        },
-        function () {
-            alert('File loading successful');
-            fileList += file.name + ',';
-            updateTaskFileList(actualProject.key, taskKey, fileList);
-        }
-    );
-}
-
-function updateTaskFileList(projectKey, taskKey, fileList) {
-    firebase.database().ref(projectKey + "/tasks/" + taskKey + "/fileList/").set(fileList);
+function updateTaskFileList(projectKey, taskKey, fileName, fileUrl) {
+    let file = {
+        fileName: fileName,
+        fileUrl: fileUrl
+    }
+    let key = convertDotToDash(fileName);
+    firebase.database().ref("projects/" + projectKey + "/tasks/" + taskKey + "/fileList/" + key).set(file);
 }
 
 // #endregion
@@ -207,47 +261,6 @@ function sendUserInvitation() {
 // #endregion
 
 // #region Projects
-
-function selectView() {
-    closeAllWindows();
-    switch (viewIndex) {
-        case 1:
-            showSelectedProject();
-            break;
-        case 2:
-            showProjectTaskList();
-            break;
-        default:
-            showProjectSelector();
-    }
-}
-
-function closeAllWindows() {
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('register').style.display = 'none';
-    document.getElementById('projectSelector').style.display = 'none';
-    document.getElementById('projectData').style.display = 'none';
-    document.getElementById('projectBoard').style.display = 'none';
-    document.getElementById('projectTaskList').style.display = 'none';
-    document.getElementById('taskWindow').style.display = 'none';
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('optionsButtons').style.display = 'none';
-    document.getElementById('newProjectWindow').style.display = 'none';
-    document.getElementById('invitation').style.display = 'none';
-    document.getElementById('invitationError').style.display = 'none';
-    document.getElementById('optionsSideBar').style.display = 'none';
-}
-
-function initializeUI() {
-    closeAllWindows();
-    document.getElementById('login').style.display = 'block';
-}
-
-function showProjectSelector() {
-    closeAllWindows();
-    showProjectsList();
-    document.getElementById('projectSelector').style.display = 'block';
-}
 
 function showProjectsList() {
     //showProjectSelector();
@@ -1326,7 +1339,7 @@ function showProjectUsers() {
         let actUser = user.val();
         if (actualProject.team.includes(user.key)) {
             let picture = (actUser.picture) ? "<img src='" + actUser.picture + "' class='avatar'></img>" : "<i class='fa fa-user-circle-o avatar' aria-hidden='true' style='font-size: 1.9em;'></i>";
-            usersPicture += "<div class='userPicture'>" + picture + "</div><div class='userInfo'><span class='userName'> " + actUser.name + "</span><br><span class='userPosition'> " + actUser.position + "</span></div>";
+            usersPicture += "<div class='userCard'><div class='userPicture'>" + picture + "</div><div class='userInfo'><span class='userName'> " + actUser.name + "</span><br><span class='userPosition'> " + actUser.position + "</span></div></div>";
         }
     });
     element.innerHTML = usersPicture;
@@ -1376,7 +1389,8 @@ function addNewTask() {
         important: 'false',
         favorite: 'false'
     }
-    showFrom(task, newTaskIndex, false);
+    actualTaskKey = newTaskIndex;
+    showForm(task, newTaskIndex, false);
 }
 
 function getActualDate() {
@@ -1390,15 +1404,16 @@ function getActualDate() {
 function editTask(taskKey) {
     for (let task in tasksList) {
         if (task == taskKey) {
-            showFrom(tasksList[task], taskKey, true);
+            showForm(tasksList[task], taskKey, true);
         }
     }
 }
 
-function showFrom(task, taskKey, showDeleteButton) {
-    closeAllWindows();
+function showForm(task, taskKey, showDeleteButton) {
+    attachedFiles = [];
+    actualTaskKey = taskKey;
     document.getElementById('optionsButtons').style.display = 'block';
-    document.getElementById("taskWindow").style.display = "block";
+    document.getElementById("myModal").style.display = "block";
     document.getElementById("deleteTaskButton").style.display = (showDeleteButton) ? "inline" : "none";
     document.getElementById("key").value = taskKey;
     document.getElementById("task").innerHTML = task.task;
@@ -1410,16 +1425,70 @@ function showFrom(task, taskKey, showDeleteButton) {
     document.getElementById("comments").innerHTML = task.comments;
     document.getElementById("area").value = task.area;
     document.getElementById("status").value = task.status;
-    //document.getElementById("repeat").value = task.repeat;
     document.getElementById("checkList").innerHTML = getCheckListHTML(taskKey, task.checkList);
-    document.getElementById("fileList").value = task.fileList;
-    document.getElementById("fileListUI").value = sowFileList(task.fileList);
+
+    document.getElementById("fileItems").innerHTML = getFileItem((typeof task.fileList == "object") ? task.fileList : []);
+
     document.getElementById("important").value = task.important;
     document.getElementById("favorite").favorite = task.favorite;
     let taskImportant = (task.important == 'true') ? 'fa fa-flag' : 'fa fa-flag-o';
     document.getElementById('taskImportant').setAttribute('class', taskImportant);
     let taskFavorite = (task.favorite == 'true') ? 'fa fa-star' : 'fa fa-star-o';
     document.getElementById('taskFavorite').setAttribute('class', taskFavorite);
+}
+
+function getCheckListHTML(taskKey, checkList) {
+    let result = "";
+    for (let index in checkList) {
+        let status = (checkList[index].status) ? "checked" : "";
+        result += `
+            <table class="checkItemTable">
+                <tr class="checkItem">
+                    <td valign="top" width="5%">
+                        <input type="checkbox" class="checkboxControl" onclick="calculatePercentage()" ${status}>
+                    </td>
+                    <td valign="top" width="85%" align="justify">
+                        <span class="checkListItem" type="text" contenteditable="true">${checkList[index].item}</span>
+                    </td>
+                    <td valign="top" width="10%" align="right">
+                        <!--<i class="fa fa-id-card-o checkItemOptions" aria-hidden="true" onclick="convetCheckItemToTask('${taskKey}','${index}')" title="Convert to task..."></i>-->
+                        <b><span onclick="deleteCheckItem('${taskKey}','${index}')" class="checkItemOptions" title="Delete...">&nbsp;&times;&nbsp;</span></b>
+                    </td>
+                </tr>
+            </table>
+        `;
+    }
+    return result;
+}
+
+function getFileItem(fileList) {
+    let result = "";
+    for (idx in fileList) {
+        let file = fileList[idx];
+        if (file) {
+            result += `
+                    <div class="fileItem" title="View ${file.fileName}" onclick="location.href = '${file.fileUrl}'" style="cursor: pointer;">
+                        <span><i class="fa fa-file" style="font-size: 2em;"></i><br>${file.fileName}</span>
+                    </div>
+                `;
+        }
+    }
+    return result;
+}
+
+function setFileUploadEvent() {
+    document.getElementById('fileLoad').addEventListener('change', function (event) {
+        event.preventDefault();
+        let newFile = event.target.files[0];
+        attachedFiles.push(newFile);
+        let file = {
+            0: {
+                fileName: newFile.name,
+                fileUrl: ""
+            }
+        }
+        document.getElementById("fileItems").innerHTML += getFileItem(file);
+    });
 }
 
 function showResponsibleWindow() {
@@ -1472,44 +1541,7 @@ function markTaskAsFavorite() {
     }
 }
 
-function getCheckListHTML(taskKey, checkList) {
-    let result = "";
-    for (let index in checkList) {
-        let status = (checkList[index].status) ? "checked" : "";
-        result += `
-            <table class="checkItemTable">
-                <tr class="checkItem">
-                    <td valign="top" width="5%">
-                        <input type="checkbox" class="checkboxControl" onclick="calculatePercentage()" ${status}>
-                    </td>
-                    <td valign="top" width="85%" align="justify">
-                        <span class="checkListItem" type="text" contenteditable="true">${checkList[index].item}</span>
-                    </td>
-                    <td valign="top" width="10%" align="right">
-                        <!--<i class="fa fa-id-card-o checkItemOptions" aria-hidden="true" onclick="convetCheckItemToTask('${taskKey}','${index}')" title="Convert to task..."></i>-->
-                        <b><span onclick="deleteCheckItem('${taskKey}','${index}')" class="checkItemOptions" title="Delete...">&nbsp;&times;&nbsp;</span></b>
-                    </td>
-                </tr>
-            </table>
-        `;
-    }
-    return result;
-}
-
-function sowFileList(fileList) {
-    let result = "";
-    let fileArray = fileList.split(",");
-    fileArray.forEach (file => {
-        if (file) {
-            result += `
-                <div style="float: left; text-align: center;" title="View ${file}">
-                    <span><i class="fa fa-file"></i><br>${file}</span>
-                </div>
-            `;
-        }
-    });
-}
-
+// TODO: Convertir item del checklist en tarea
 function convetCheckItemToTask(taskKey, checkListKey) {
     calculatePercentage();
     //firebase.database().ref("projects/" + actualProject.key + "/tasks/" + taskKey + "/checkList/" + checkListKey).remove();
@@ -1556,13 +1588,16 @@ function updateTask() {
         comments: document.getElementById("comments").innerHTML,
         area: document.getElementById("area").value,
         status: document.getElementById("status").value,
-        //repeat: document.getElementById("repeat").value,
         checkList: getTaskCheckList(),
         important: document.getElementById("important").value,
         favorite: document.getElementById("favorite").value,
-        fileList: document.getElementById("fileList").value
+        //fileList: attachedFiles
     }
-    updateTaskInFB(task, taskKey);
+    if (task.task) {
+        updateTaskInFB(task, taskKey);
+        loadFileToFB(taskKey);
+    }
+    modal.style.display = "none";
 }
 
 function getTaskCheckList() {
@@ -1956,6 +1991,14 @@ function sendMsg() {
         });
     }
     message.value = "";
+}
+
+// #endregion
+
+// #region Generales
+
+function convertDotToDash(input) {
+    return input.replace(/\./g, "-");
 }
 
 // #endregion

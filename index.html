@@ -54,7 +54,7 @@
                 title="Options..."></i>
             <div id="userOptions" class="userOptions"></div>
         </div>
-        <div id="optionsButtons" class="optionsButtons">
+        <div id="optionsButtons" class="ventana optionsButtons">
             <nav style="float: left;">
                 <ul>
                     <li><a href="#" onclick="showProjectSelector()">
@@ -85,7 +85,7 @@
             </nav>
             <nav style="float: right;">
                 <ul>
-                    <li><a href="#" onclick="showMessenger()">
+                    <li><a href="#" onclick="showMessenger()" style="display: none;">
                             <i class="fa fa-comment-o" aria-hidden="true"></i> Mesenger
                         </a>
                     </li>
@@ -100,7 +100,18 @@
 
     <div class="container">
 
-        <div id="login" class="login">
+        <div id="splash" class="ventana splashWindow">
+            <div class="startSection">
+                <h1 class="startText startTitle">Easy Task</h1>
+                <h2 class="startText startSubTitle">A free planning system for task management</h2>
+                <a href="#" class="startButton" onclick="selectWindow('login')">Click to start</a>
+            </div>
+            <div class="startSection">
+                <img id="splashImg" src="recursos/splash.png" class="splash" alt="Ventana de inicio">
+            </div>
+        </div>
+
+        <div id="login" class="ventana login" style="display: none">
             <div class="modalHeader">
                 Login
             </div>
@@ -125,7 +136,7 @@
             </div>
         </div>
 
-        <div id="invitation" class="login" style="display: none;">
+        <div id="invitation" class="ventana login" style="display: none">
             <div class="modalHeader">
                 Invite a user
             </div>
@@ -144,7 +155,7 @@
             </div>
         </div>
 
-        <div id="register" class="login" style="display: none; margin-top: -40px;">
+        <div id="register" class="ventana login" style="margin-top: -40px; display: none">
             <div class="modalHeader">
                 User profile
             </div>
@@ -192,11 +203,11 @@
         </div>
 
         <div id="project">
-            <div id="projectSelector" class="projectSelector">
+            <div id="projectSelector" class="ventana projectSelector" style="display: none">
                 <div id="projectList"></div>
             </div>
 
-            <div id="projectData" class="projectArea" style="display: none;">
+            <div id="projectData" class="ventana projectArea" style="display: none;">
                 <div class="projectAreaLeft">
                     <div class="projectInfo" style="display: none;">Leader: <span id="projectLeader"></span></div>
                     <div class="projectInfo" style="display: none;">Start date: <span id="projectStart"></span></div>
@@ -212,7 +223,7 @@
                 </div>
             </div>
 
-            <div id="projectBoard" class="projectArea">
+            <div id="projectBoard" class="ventana projectArea" style="display: none">
                 <div id="drag_To do" class="column column0">
                     <div id="columnTitle_0" class="columnTitle"></div>
                     <div id="columnContent_0" class="columnContent" ondrop="drop(event, '')"
@@ -240,29 +251,35 @@
                 </div>
             </div>
 
-            <div id="projectTaskList" class="projectArea" style="display: none;">
+            <div id="projectTaskList" class="ventana projectArea" style="display: none;">
                 <div class="projectInfo" style="margin-bottom: 10px;">
                     <table style="border-bottom: 1px solid blue; width: 97%;">
                         <tr style="border-bottom: 1px solid blue">
-                            <td><i class="fa fa-list-alt filterBarItem" aria-hidden="true" title="Show all tasks"
-                                    onclick="filterTask('All')"></i></td>
-                            <td><i class="fa fa-clone filterBarItem" aria-hidden="true" title="Show To tasks do"
-                                    onclick="filterTask('0')"></i></td>
-                            <td><i class="fa fa-pencil-square-o filterBarItem" aria-hidden="true"
-                                    title="Show On schedule tasks" onclick="filterTask('1')"></i></td>
-                            <td><i class="fa fa-square-o filterBarItem" aria-hidden="true" title="Show Overdue tasks"
-                                    onclick="filterTask('2')"></i></td>
-                            <td><i class="fa fa-check-square-o filterBarItem" aria-hidden="true" title="Show Done tasks"
-                                    onclick="filterTask('3')"></i></td>
-                            <td><i class="fa fa-window-close-o filterBarItem" aria-hidden="true"
-                                    title="Show Canceled tasks" onclick="filterTask('4')"></i></td>
-                            <td><i class="fa fa-flag-o filterBarItem" aria-hidden="true" title="Show Important tasks"
-                                    onclick="filterTask('Important')"></i></td>
-                            <td><i class="fa fa-star-o filterBarItem" aria-hidden="true" title="Show Favorite tasks"
-                                    onclick="filterTask('Favorite')"></i></td>
-                            <td><input id="searchTask" type="text" onkeyup="searchTask()"
-                                    style="margin-bottom: 0px; margin-top: 3px; background: transparent; width: 90%;"
-                                    placeholder="Search..."></td>
+                            <td align="right">
+                                <table id="searchTable">
+                                    <tr>
+                                        <td><i class="fa fa-list-alt filterBarItem" aria-hidden="true"
+                                                title="Show all tasks" onclick="filterTask('All')"></i></td>
+                                        <td><i class="fa fa-clone filterBarItem" aria-hidden="true"
+                                                title="Show To tasks do" onclick="filterTask('0')"></i></td>
+                                        <td><i class="fa fa-pencil-square-o filterBarItem" aria-hidden="true"
+                                                title="Show On schedule tasks" onclick="filterTask('1')"></i></td>
+                                        <td><i class="fa fa-square-o filterBarItem" aria-hidden="true"
+                                                title="Show Overdue tasks" onclick="filterTask('2')"></i></td>
+                                        <td><i class="fa fa-check-square-o filterBarItem" aria-hidden="true"
+                                                title="Show Done tasks" onclick="filterTask('3')"></i></td>
+                                        <td><i class="fa fa-window-close-o filterBarItem" aria-hidden="true"
+                                                title="Show Canceled tasks" onclick="filterTask('4')"></i></td>
+                                        <td><i class="fa fa-flag-o filterBarItem" aria-hidden="true"
+                                                title="Show Important tasks" onclick="filterTask('Important')"></i></td>
+                                        <td><i class="fa fa-star-o filterBarItem" aria-hidden="true"
+                                                title="Show Favorite tasks" onclick="filterTask('Favorite')"></i></td>
+                                        <td><input id="searchTask" type="text" onkeyup="searchTask()"
+                                                style="margin-bottom: 0px; margin-top: 3px; background: transparent; width: 90%;"
+                                                placeholder="Search..."></td>
+                                    </tr>
+                                </table>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -270,10 +287,12 @@
             </div>
         </div>
 
-        <div id="taskWindow" class="modalBackgroud">
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
             <div class="modalWindow">
                 <div class="modalHeader">Edit task</div>
-                <span onclick="selectView()" class="modalClose" title="Close window">&times;</span>
+                <span onclick="selectView()" class="modalClose close" title="Close window">&times;</span>
                 <div class="modalContainer">
                     <div>
                         <b><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Task title:</b>
@@ -331,17 +350,18 @@
                     <input id="key" type="hidden">
                     <input id="important" type="hidden">
                     <input id="favorite" type="hidden">
-                    <input id="fileList" type="hidden">
+                    <div id="fileItems"></div>
                 </div>
                 <div class="modalFooter">
                     <button onclick="deleteTask()" id="deleteTaskButton">Delete</button>
-                    <button onclick="selectView()">Cancel</button>
+                    <button onclick="modal.style.display = 'none';">Cancel</button>
                     <button onclick="updateTask()">Acept</button>
                 </div>
             </div>
+
         </div>
 
-        <div id="newProjectWindow" class="modalBackgroud">
+        <div id="newProjectWindow" class="ventana modalBackgroud" style="display: none">
             <div class="modalWindow">
                 <div class="modalHeader">New project</div>
                 <div class="modalContainer taskModal">
@@ -441,7 +461,7 @@
             </div>
         </div>
 
-        <div id="optionsSideBar" class="optionsBar" style="display: none">
+        <div id="optionsSideBar" class="ventana optionsBar" style="display: none">
             <ul id="usersOptionsSideBar">
                 <li><a href="#" onclick="closeAllWindows();document.getElementById('register').style.display = 'block'">
                         <i class="fa fa-user-circle-o" aria-hidden="true"></i> My profile...
