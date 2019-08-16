@@ -1,9 +1,17 @@
 ;
 const CACHE_NAME = 'v1_chache_dta_tms',
 urlsToCache = [
-    './',
     'https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
     'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+    './main.css',
+    './movil.css',
+    './ico_512.png',
+    './ico_hdpi.png',
+    './ico_mdpi.png',
+    './ico_xhdpi.png',
+    './ico_xxhdpi.png',
+    './ico_xxxhdpi.png',
+    './splash.png',
     './image.png'
 ]
 
