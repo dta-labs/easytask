@@ -199,7 +199,7 @@ function login(userMail, userPassword) {
     authUser = null;
     usersList.forEach(user => {
         let actualUser = user.val();
-        if (actualUser.mail == userMail && actualUser.password == userPassword) {
+        if (actualUser.mail == userMail.toLowerCase() && actualUser.password == userPassword) {
             authUser = actualUser;
             authUser.key = user.key;
         }
