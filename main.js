@@ -1451,7 +1451,7 @@ function getCheckListHTML(taskKey, checkList) {
                         <span class="checkListItem" type="text" contenteditable="true">${checkList[index].item}</span>
                     </td>
                     <td valign="top" width="10%" align="right">
-                        <!--<i class="fa fa-id-card-o checkItemOptions" aria-hidden="true" onclick="convetCheckItemToTask('${taskKey}','${index}')" title="Convert to task..."></i>-->
+                        <!--<i class="fa fa-id-card-o checkItemOptions" aria-hidden="true" onclick="convertCheckItemToTask('${taskKey}','${index}')" title="Convert to task..."></i>-->
                         <b><span onclick="deleteCheckItem('${taskKey}','${index}')" class="checkItemOptions" title="Delete...">&nbsp;&times;&nbsp;</span></b>
                     </td>
                 </tr>
@@ -1542,15 +1542,17 @@ function markTaskAsFavorite() {
 }
 
 // TODO: Convertir item del checklist en tarea
-function convetCheckItemToTask(taskKey, checkListKey) {
+function convertCheckItemToTask(taskKey, checkListKey) {
+    document.getElementById("checkList").innerHTML = getCheckListHTML(taskKey, task.checkList);
     calculatePercentage();
     //firebase.database().ref("projects/" + actualProject.key + "/tasks/" + taskKey + "/checkList/" + checkListKey).remove();
 }
 
 function deleteCheckItem(taskKey, checkListKey) {
-    calculatePercentage();
     // Mecanismo para mantener abierta la ventana activa durante la actualización
     firebase.database().ref("projects/" + actualProject.key + "/tasks/" + taskKey + "/checkList/" + checkListKey).remove();
+    calculatePercentage();
+    editTask(taskKey);
 }
 
 function calculatePercentage() {
@@ -1653,7 +1655,7 @@ function addNewCheckListItem() {
                     <span class="checkListItem" type="text" contenteditable="true">${newItem}</span>
                 </td>
                 <td valign="top" width="10%" align="right">
-                    <!--<i class="fa fa-id-card-o checkItemOptions" aria-hidden="true" onclick="convetCheckItemToTask('${taskKey}','${index}')" title="Convert to task..."></i>-->
+                    <!--<i class="fa fa-id-card-o checkItemOptions" aria-hidden="true" onclick="convertCheckItemToTask('${taskKey}','${index}')" title="Convert to task..."></i>-->
                     <b><span onclick="deleteCheckItem('${taskKey}','${index}')" class="checkItemOptions" title="Delete...">&nbsp;&times;&nbsp;</span></b>
                 </td>
             </tr>
